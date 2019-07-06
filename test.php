@@ -4,7 +4,6 @@ require_once "vendor/autoload.php";
 
 use Gsons\APP;
 date_default_timezone_set("PRC");
-
 //需要监听的房间
 $config = [
     "HuYa" => [

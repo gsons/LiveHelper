@@ -50,7 +50,7 @@ class APP
                         continue;
                     }
                     printf("\007");
-                    $roomUrl = sprintf($class::BASE_ROOM_URl, $roomId);
+                    $roomUrl = sprintf($class::BASE_ROOM_URL, $roomId);
                     $logInfo = "{$siteName}-{$nick}-{$roomUrl}";
                     Console::log($logInfo);
                     Console::record($logInfo);

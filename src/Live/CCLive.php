@@ -8,8 +8,6 @@
 
 
 namespace Gsons\Live;
-;
-
 use Curl\Curl;
 
 class CCLive extends Live implements Api
