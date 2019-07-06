@@ -1,0 +1,12 @@
+{
+    "require": {
+        "curl/curl": "^2.2",
+        "topthink/think-cache": "^1.1",
+        "ext-curl":"*","ext-json":"*","ext-iconv":"*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gsons\\": "src"
+        }
+    }
+}
