@@ -18,7 +18,13 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/php-mod/curl/zipball/d22086dd2eee5ca02e4c29b9a5bdf3645bfdbbff",
                 "reference": "d22086dd2eee5ca02e4c29b9a5bdf3645bfdbbff",
-                "shasum": ""
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "ext-curl": "*",
@@ -73,7 +79,13 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/think-cache/zipball/f7f2cb46270cc1951bb847ae756af11763e83d5e",
                 "reference": "f7f2cb46270cc1951bb847ae756af11763e83d5e",
-                "shasum": ""
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": ">=5.6.0"

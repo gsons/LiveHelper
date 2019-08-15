@@ -9,7 +9,7 @@
 namespace Gsons;
 
 use think\Cache;
-
+use Gsons\Live\Live;
 class APP
 {
     public static function run($config)
@@ -55,10 +55,20 @@ class APP
                     Console::log($logInfo);
                     Console::record($logInfo);
                     Cache::set($room_key, $roomId, 3 * 60);
+
+                    try {
+                        $liveUrl=$class::getLiveUrl($roomId);
+                        $fileName= date('Ymd_His') . '.mp4';
+                        Live::record($liveUrl,'video',$fileName,'4:00');
+                    } catch (\ErrorException $e) {
+                        Console::log("ERROR:" . $e->getMessage());
+                    }
+
                 }
             }
             Console::logEOL();
             sleep(10);
         }
     }
+
 }

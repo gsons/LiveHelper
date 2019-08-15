@@ -11,7 +11,7 @@ namespace Gsons;
 
 class Console
 {
-    public static function log($msg, $isGBK = true)
+    public static function log($msg, $isGBK = false)
     {
         if (is_array($msg)) {
             $msg = json_encode($msg, JSON_UNESCAPED_UNICODE);
