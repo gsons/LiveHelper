@@ -8,7 +8,7 @@
 
 namespace Gsons\Live;
 
-use Curl\Curl;
+use Gsons\HttpCurl;
 
 class InkeLive
 {
@@ -26,9 +26,7 @@ class InkeLive
     public static function getLiveUrl($roomId)
     {
 
-        $curl = new Curl();
-        $curl->setUserAgent('user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.22 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1');
-        $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
+        $curl = new HttpCurl();
         $curl->setReferrer('http://inke.cn');
         $roomUrl = sprintf(self::BASE_LIVE_URL, $roomId);
         $curl->get($roomUrl);
@@ -50,11 +48,8 @@ class InkeLive
      */
     public static function getDancingRoomId()
     {
-        $curl = new Curl();
-        $curl->setUserAgent('user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.22 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1');
-        $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
+        $curl = new HttpCurl();
         $curl->setReferrer('http://www.yy.com/');
-        $curl->setHeader('X-Requested-With', 'XMLHttpRequest');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
         if ($curl->error) {

@@ -10,7 +10,8 @@ namespace Gsons;
 
 use think\Cache;
 use Gsons\Live\Live;
-class APP
+
+class App
 {
     public static function run($config)
     {
@@ -25,6 +26,10 @@ class APP
         Console::log('start recording' . PHP_EOL);
         while (1) {
             foreach ($config as $liveName => $roomIdArr) {
+
+                /**
+                 * @var $class \Gsons\Live\HuyaLive;
+                 */
                 $class = "\Gsons\Live\\{$liveName}Live";
                 if (!class_exists($class)) {
                     Console::log("ERROR:cant not find class $class");

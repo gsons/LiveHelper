@@ -2,7 +2,7 @@
 
 require_once "vendor/autoload.php";
 
-use Gsons\APP;
+use Gsons\App;
 date_default_timezone_set("PRC");
 
 //需要监听的房间
@@ -51,4 +51,4 @@ $config = [
         10284346=>"MMMMM"
     ]
 ];
-APP::run($config);
+App::run($config);

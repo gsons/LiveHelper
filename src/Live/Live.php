@@ -10,9 +10,10 @@ namespace Gsons\Live;
 
 
 namespace Gsons\Live;
+use Gsons\HttpCurl;
+
 abstract class Live
 {
-
     /**
      * 录制直播视频
      * @param $liveUrl
