@@ -41,7 +41,6 @@ class App
                     Console::log("ERROR:" . $e->getMessage());
                     continue;
                 }
-
                 $siteName = $class::SITE_NAME;
                 Console::log("{$siteName}:" . json_encode($arr, JSON_UNESCAPED_UNICODE));
                 foreach ($arr as $roomId => $nick) {
@@ -68,7 +67,7 @@ class App
                     } catch (\ErrorException $e) {
                         Console::log("ERROR:" . $e->getMessage());
                     }
-
+                    break;
                 }
             }
             Console::logEOL();
