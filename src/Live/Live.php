@@ -26,7 +26,7 @@ abstract class Live
         if (!is_dir($path)) {
             mkdir(iconv("UTF-8", "GBK", $path), 0777, true);
         }
-        $cmd = "ffmpeg -ss 0:0 -t {$endTime} -i {$liveUrl} -max_muxing_queue_size 1024 {$path}/{$fileName}";
+        $cmd = "ffmpeg -ss 0:0 -t {$endTime} -i \"{$liveUrl}\" -max_muxing_queue_size 1024 {$path}/{$fileName}";
         exec($cmd);
     }
 }
