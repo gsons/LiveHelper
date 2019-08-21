@@ -5,18 +5,14 @@
  * Date: 2019/7/5
  * Time: 2:37
  */
-
 namespace Gsons\Live;
-
 use Gsons\HttpCurl;
-
 class YYLive extends Live implements Api
 {
     const SITE_NAME = "YY直播";
     const BASE_ROOM_URL = "https://www.yy.com/%s";
     const BASE_LIVE_URL = "https://interface.yy.com/hls/new/get/%s/%s/2000?source=wapyy&callback=jsonp2";
     const DANCE_ROOM_API_URL = "http://data.3g.yy.com/mobyy/nav/dance/idx";
-
     /**
      * @param $roomId
      * @return mixed
@@ -41,8 +37,6 @@ class YYLive extends Live implements Api
             throw new \ErrorException("maybe not exist the roomId {$roomId}");
         }
     }
-
-
     /**
      * @return array
      * @throws \ErrorException
@@ -68,6 +62,5 @@ class YYLive extends Live implements Api
         }
         unset($data);
         return $arr;
-
     }
 }
