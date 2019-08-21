@@ -20,16 +20,19 @@ class HttpCurl extends Curl
         '192.168.64.1'
     ];
 
-    public function __construct($config=[])
+    public function __construct($config=[],$init=true)
     {
-        parent::__construct();
+        if($init){
+            parent::__construct();
+        }else{
+            $this->curl = curl_init();
+        }
         if(isset($config['user_agent'])&&is_array($config['user_agent'])){
             $this->userAgentArr=array_merge($this->userAgentArr,$config['user_agent']);
         }
         if(isset($config['ip'])&&is_array($config['ip'])){
             $this->ipArr=array_merge($this->ipArr,$config['ip']);
         }
-
         $this->initOpt();
     }
 

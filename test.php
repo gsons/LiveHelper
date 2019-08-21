@@ -53,7 +53,7 @@ $config = [
         10284346=>"MMMMM"
     ]
 ];
-App::run($config);
+App::run($config,true);
 
 
 
