@@ -13,7 +13,7 @@ use Gsons\Live\Live;
 
 class App
 {
-    public static function run($config,$record=false)
+    public static function run($config, $record = false)
     {
         printf("\007");
         Cache::init([
@@ -32,13 +32,13 @@ class App
                  */
                 $class = "\Gsons\Live\\{$liveName}Live";
                 if (!class_exists($class)) {
-                    Console::log("ERROR:cant not find class $class");
+                    Console::error("ERROR:cant not find class $class");
                     continue;
                 }
                 try {
                     $arr = $class::getDancingRoomId();
                 } catch (\ErrorException $e) {
-                    Console::log("ERROR:" . $e->getMessage());
+                    Console::error($e);
                     continue;
                 }
                 $siteName = $class::SITE_NAME;
@@ -59,13 +59,13 @@ class App
                     Console::log($logInfo);
                     Console::record($logInfo);
                     Cache::set($room_key, $roomId, 3 * 60);
-                    if($record){
+                    if ($record) {
                         try {
-                            $liveUrl=$class::getLiveUrl($roomId);
-                            $fileName= date('Ymd_His') . '.mp4';
-                            Live::record($liveUrl,'video',$fileName,'4:00');
+                            $liveUrl = $class::getLiveUrl($roomId);
+                            $fileName = date('Ymd_His') . '.mp4';
+                            Live::record($liveUrl, 'video', $fileName, '4:00');
                         } catch (\ErrorException $e) {
-                            Console::log("ERROR:" . $e->getMessage());
+                            Console::error($e);
                         }
                         break;
                     }

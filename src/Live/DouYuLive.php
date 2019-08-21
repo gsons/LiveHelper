@@ -15,7 +15,7 @@ class DouYuLive extends Live implements Api
     const SITE_NAME = "斗鱼直播";
     const BASE_ROOM_URL = "https://www.douyu.com/%s";
     //https://www.douyu.com/gapi/rkc/directory/3_1122/1
-    const DANCE_ROOM_API_URL = "https://www.douyu.com/gapi/rknc/directory/yzRec/1";
+    const DANCE_ROOM_API_URL = "https://www.douyu.com/gapi/rkc/directory/2_1008/1";
     const ENC_URL = "https://www.douyu.com/swf_api/homeH5Enc?rids=%s";
     const GET_LIVE_URL="https://www.douyu.com/lapi/live/getH5Play/%s";
 

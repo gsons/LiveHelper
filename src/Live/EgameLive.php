@@ -7,39 +7,42 @@
  */
 
 namespace Gsons\Live;
+
 use Gsons\HttpCurl;
 
 class EGameLive extends Live implements Api
 {
-    const BASE_ROOM_URL = "https://www.huya.com/%s";
-
+    const BASE_ROOM_URL = "https://egame.qq.com/%s";
+    const SITE_NAME = "企鹅电竞";
     /**
      * @param $roomId
      * @throws \ErrorException
      * @return string
      */
-    public static function getLiveUrl($roomId){
-        $curl = new HttpCurl([],false);
-//        $curl->setReferrer('https://egame.qq.com');
+    public static function getLiveUrl($roomId)
+    {
+
+        $curl = new HttpCurl([], false);
+        $curl->setReferrer('https://egame.qq.com');
         $roomUrl = sprintf(self::BASE_ROOM_URL, $roomId);
         $curl->get($roomUrl);
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }
-        $html=$curl->response;
-        print_r([$roomUrl,$html]);exit;
-        preg_match("/_playerInfo = ({.+?});/",$html,$match);
-
-        if(isset($match[0])){
-            $arr=json_decode($match[0],true);
-            return $arr;
-        }else{
-            throw new \ErrorException('failed to get live url');
+        $html = $curl->response;
+        preg_match("/var playerInfo = (.*?);/", $html, $match);
+        if (isset($match[1])) {
+            $arr = json_decode($match[1], true);
+            if (isset($arr['urlArray'][0]['playUrl'])) {
+                return $arr['urlArray'][0]['playUrl'];
+            }
         }
+        throw new \ErrorException('failed to get live url');
     }
 
     //todo 企鹅电竞暂未这个接口
-    public static function getDancingRoomId(){
+    public static function getDancingRoomId()
+    {
 
     }
 
