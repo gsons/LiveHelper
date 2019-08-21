@@ -4,3 +4,4 @@ vendor
 cache
 log.txt
 room.txt
+*.log

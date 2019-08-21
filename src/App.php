@@ -13,7 +13,7 @@ use Gsons\Live\Live;
 
 class App
 {
-    public static function run($config)
+    public static function run($config,$record=false)
     {
         printf("\007");
         Cache::init([
@@ -59,15 +59,16 @@ class App
                     Console::log($logInfo);
                     Console::record($logInfo);
                     Cache::set($room_key, $roomId, 3 * 60);
-
-                    try {
-                        $liveUrl=$class::getLiveUrl($roomId);
-                        $fileName= date('Ymd_His') . '.mp4';
-                        Live::record($liveUrl,'video',$fileName,'4:00');
-                    } catch (\ErrorException $e) {
-                        Console::log("ERROR:" . $e->getMessage());
+                    if($record){
+                        try {
+                            $liveUrl=$class::getLiveUrl($roomId);
+                            $fileName= date('Ymd_His') . '.mp4';
+                            Live::record($liveUrl,'video',$fileName,'4:00');
+                        } catch (\ErrorException $e) {
+                            Console::log("ERROR:" . $e->getMessage());
+                        }
+                        break;
                     }
-                    break;
                 }
             }
             Console::logEOL();
