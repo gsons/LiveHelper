@@ -51,4 +51,4 @@ $config = [
         722035883=>"语嫣"
     ]
 ];
-App::run($config,false);
+App::run($config,true);
