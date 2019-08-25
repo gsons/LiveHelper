@@ -70,6 +70,7 @@ class App
                         break;
                     }
                 }
+                unset($arr);
             }
             Console::logEOL();
             sleep(10);

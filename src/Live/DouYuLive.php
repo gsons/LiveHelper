@@ -15,20 +15,32 @@ class DouYuLive extends Live implements Api
     const SITE_NAME = "斗鱼直播";
     const BASE_ROOM_URL = "https://www.douyu.com/%s";
     //https://www.douyu.com/gapi/rkc/directory/3_1122/1
-    const DANCE_ROOM_API_URL = "https://www.douyu.com/gapi/rkc/directory/2_1008/1";
+    const DANCE_ROOM_API_URL = "https://www.douyu.com/gapi/rkc/directory/2_1008/%s";
     const ENC_URL = "https://www.douyu.com/swf_api/homeH5Enc?rids=%s";
     const GET_LIVE_URL="https://www.douyu.com/lapi/live/getH5Play/%s";
 
 
     /**
-     * @return array
      * @throws \ErrorException
      */
     public static function getDancingRoomId()
     {
+        $arr1=self::getDancingRoomIdByPage(1);
+        $arr2=self::getDancingRoomIdByPage(2);
+        $arr3=self::getDancingRoomIdByPage(3);
+        $arr=array_merge($arr1,$arr2,$arr3);
+        return $arr;
+    }
+
+    /**
+     * @param $page
+     * @return array
+     * @throws \ErrorException
+     */
+    private static function getDancingRoomIdByPage($page){
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.douyu.com/g_yz');
-        $curl->get(self::DANCE_ROOM_API_URL);
+        $curl->get(sprintf(self::DANCE_ROOM_API_URL,$page));
         $data = json_decode($curl->response, true);
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
