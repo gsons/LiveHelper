@@ -73,7 +73,7 @@ class App
                 unset($arr);
             }
             Console::logEOL();
-            sleep(10);
+            sleep(7);
         }
     }
 
