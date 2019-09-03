@@ -62,7 +62,7 @@ class App
                     if ($record) {
                         try {
                             $liveUrl = $class::getLiveUrl($roomId);
-                            $fileName = date('Ymd_His') . '.mp4';
+                             $fileName = "{$siteName}-{$nick}-".date('Ymd_His') . '.mp4';
                             Live::record($liveUrl, 'video', $fileName, '240');
                         } catch (\ErrorException $e) {
                             Console::error($e);

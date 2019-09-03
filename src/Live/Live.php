@@ -27,7 +27,13 @@ abstract class Live
             mkdir(iconv("UTF-8", "GBK", $path), 0777, true);
         }
         //$cmd = "ffmpeg -ss 0:0 -t {$endTime} -i \"{$liveUrl}\" -max_muxing_queue_size 1024 {$path}/{$fileName}";
-        $cmd="ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}";
-        exec($cmd);
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+          $cmd="ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}";
+          exec($cmd);
+        }else{ 
+          $cmd="ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}"." > /dev/null &";
+          shell_exec($cmd);
+        }
     }
 }
+
