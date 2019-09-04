@@ -45,7 +45,7 @@ class App
             $pidArr = $pidArr ? $pidArr : [];
             foreach ($pidArr as $_pid) {
                 $fetching = Cache::get('fetching_pid_' . $_pid);
-                if ($fetching && $pid != $_pid) {
+                if ($fetching&& $pid != $_pid) {
                     $fetchPidNum++;
                 }
             }
@@ -53,8 +53,7 @@ class App
                 continue;
             }
             Console::record("{$pid}:{$fetchPidNum}");
-            
-            Cache::set('fetching_pid_' . $pid, true);
+            Cache::set('fetching_pid_' . $pid,$pid);
             foreach ($config as $liveName => $roomIdArr) {
 
                 /**
@@ -90,11 +89,15 @@ class App
                     Console::record($logInfo);
                     Cache::set($room_key, $roomId, 230);
                     if ($record) {
-                        Cache::set('fetching_pid_' . $pid,false);
+                        Cache::rm('fetching_pid_' . $pid);
+                        Cache::rm('fetching_pid_' . $pid);
+                        Cache::rm('fetching_pid_' . $pid);
+                        Cache::rm('fetching_pid_' . $pid);
+                        Cache::rm('fetching_pid_' . $pid);
                         try {
                             $liveUrl = $class::getLiveUrl($roomId);
                             $fileName = "{$siteName}-{$nick}-" . date('Ymd_His') . '.mp4';
-                            Live::record($liveUrl, 'video', $fileName, 240);
+                            Live::record($liveUrl, 'video2', $fileName, 240);
                         } catch (\ErrorException $e) {
                             Console::error($e);
                         }
