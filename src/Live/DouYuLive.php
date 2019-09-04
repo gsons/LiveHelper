@@ -26,10 +26,10 @@ class DouYuLive extends Live implements Api
     public static function getDancingRoomId()
     {
        $arr1=self::getDancingRoomIdByPage(1);
-       $arr2=self::getDancingRoomIdByPage(2);
-       $arr3=self::getDancingRoomIdByPage(3);
-       $arr=array_merge($arr1,$arr2,$arr3);
-        return $arr;
+       // $arr2=self::getDancingRoomIdByPage(2);
+       // $arr3=self::getDancingRoomIdByPage(3);
+       // $arr=array_merge($arr1,$arr2,$arr3);
+        return $arr1;
     }
 
     /**

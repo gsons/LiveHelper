@@ -16,6 +16,8 @@ class App
     public static function run($config, $record = false)
     {
         printf("\007");
+        $pid = getmypid();
+
         Cache::init([
             'type' => 'File',
             'path' => './cache/',
@@ -23,8 +25,27 @@ class App
             'expire' => 0,
         ]);
         Cache::clear();
+
+        Console::init($pid);
         Console::log('start recording' . PHP_EOL);
+
+        $pidArr = Cache::get("pidArr");
+        $pidArr = $pidArr ? $pidArr : [];
+        $pidArr[] = $pid;
+        Cache::set("pidArr",$pidArr);
         while (1) {
+            $recordPidNum = 0;
+            $pidArr = Cache::get("pidArr");
+            foreach ($pidArr as $pd) {
+                $record = Cache::get('recording_pid_' . $pd);
+                if ($record&&$pid!=$pd) {
+                    $recordPidNum++;
+                }
+            }
+            if ($recordPidNum<count($pidArr)-1) {
+                continue;
+            }
+
             foreach ($config as $liveName => $roomIdArr) {
 
                 /**
@@ -58,16 +79,19 @@ class App
                     $logInfo = "{$siteName}-{$nick}-{$roomUrl}";
                     Console::log($logInfo);
                     Console::record($logInfo);
-                    Cache::set($room_key, $roomId, 3 * 60);
+                    Cache::set($room_key, $roomId, 220);
                     if ($record) {
+                        Cache::set('recording_pid_' . $pid, $pid, 240);
                         try {
                             $liveUrl = $class::getLiveUrl($roomId);
-                             $fileName = "{$siteName}-{$nick}-".date('Ymd_His') . '.mp4';
-                            Live::record($liveUrl, 'video', $fileName, '240');
+                            $fileName = "{$siteName}-{$nick}-" . date('Ymd_His') . '.mp4';
+                            Live::record($liveUrl, 'video', $fileName, 240);
                         } catch (\ErrorException $e) {
                             Console::error($e);
                         }
-                        break;
+                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                            break;
+                        }
                     }
                 }
                 unset($arr);

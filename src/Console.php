@@ -14,15 +14,21 @@ class Console
     const FILE_ERROR = "./cache/error.log";
     const FILE_DEBUG = "./cache/log.log";
     const FILE_ROOM = "./cache/room.log";
+    static $pid;
+
+    public static function init($pid)
+    {
+        self::$pid = $pid ? $pid : getmypid();
+    }
 
     public static function log($msg, $isGBK = false)
     {
         if (is_array($msg)) {
             $msg = json_encode($msg, JSON_UNESCAPED_UNICODE);
         }
-        $date = date('Y-m-d H:i:s');
+        $date = '进程ID:' . self::$pid . ' ' . date('Y-m-d H:i:s');
         $msg = $date . ' ' . $msg . PHP_EOL;
-        file_put_contents(self::FILE_DEBUG, $msg, FILE_APPEND|LOCK_EX);
+        file_put_contents(self::FILE_DEBUG, $msg, FILE_APPEND | LOCK_EX);
         if ($isGBK) {
             $msg = iconv('UTF-8', 'gbk//IGNORE', $msg);
         }
@@ -32,14 +38,14 @@ class Console
     public static function logEOL()
     {
         echo PHP_EOL;
-        file_put_contents(self::FILE_DEBUG, PHP_EOL, FILE_APPEND|LOCK_EX);
+        file_put_contents(self::FILE_DEBUG, PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 
     public static function record($msg)
     {
-        $date = date('Y-m-d H:i:s');
+        $date = '进程ID:' . self::$pid . ' ' . date('Y-m-d H:i:s');
         $msg = $date . ' ' . $msg . PHP_EOL;
-        file_put_contents(self::FILE_ROOM, $msg, FILE_APPEND|LOCK_EX);
+        file_put_contents(self::FILE_ROOM, $msg, FILE_APPEND | LOCK_EX);
     }
 
 
@@ -83,7 +89,7 @@ class Console
         } else {
             $msg = json_encode($param, true, JSON_UNESCAPED_UNICODE);
         }
-        $date=date("Y-m-d H:i:s").":".PHP_EOL;
-        file_put_contents(self::FILE_ERROR, $date.$msg.PHP_EOL, FILE_APPEND|LOCK_EX);
+        $date = '进程ID ' . self::$pid . ' ' . date("Y-m-d H:i:s") . ":" . PHP_EOL;
+        file_put_contents(self::FILE_ERROR, $date . $msg . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 }
