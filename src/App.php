@@ -19,33 +19,42 @@ class App
         $pid = getmypid();
 
         Cache::init([
-            'type' => 'File',
+            'type' => 'FileLock',
             'path' => './cache/',
             'prefix' => '',
             'expire' => 0,
         ]);
-        Cache::clear();
+  
+        $lock=Cache::get("cache_lock");
+        if(!$lock){
+            Cache::clear();
+            Cache::set("cache_lock",1,10);
+        }
 
         Console::init($pid);
+        Console::logEOL();
         Console::log('start recording' . PHP_EOL);
 
         $pidArr = Cache::get("pidArr");
         $pidArr = $pidArr ? $pidArr : [];
         $pidArr[] = $pid;
-        Cache::set("pidArr",$pidArr);
+        Cache::set("pidArr", $pidArr);
         while (1) {
-            $recordPidNum = 0;
+            $fetchPidNum = 0;
             $pidArr = Cache::get("pidArr");
-            foreach ($pidArr as $pd) {
-                $record = Cache::get('recording_pid_' . $pd);
-                if ($record&&$pid!=$pd) {
-                    $recordPidNum++;
+            $pidArr = $pidArr ? $pidArr : [];
+            foreach ($pidArr as $_pid) {
+                $fetching = Cache::get('fetching_pid_' . $_pid);
+                if ($fetching && $pid != $_pid) {
+                    $fetchPidNum++;
                 }
             }
-            if ($recordPidNum<count($pidArr)-1) {
+            if ($fetchPidNum>0) {
                 continue;
             }
-
+            Console::record("{$pid}:{$fetchPidNum}");
+            
+            Cache::set('fetching_pid_' . $pid, true);
             foreach ($config as $liveName => $roomIdArr) {
 
                 /**
@@ -79,9 +88,9 @@ class App
                     $logInfo = "{$siteName}-{$nick}-{$roomUrl}";
                     Console::log($logInfo);
                     Console::record($logInfo);
-                    Cache::set($room_key, $roomId, 220);
+                    Cache::set($room_key, $roomId, 230);
                     if ($record) {
-                        Cache::set('recording_pid_' . $pid, $pid, 240);
+                        Cache::set('fetching_pid_' . $pid,false);
                         try {
                             $liveUrl = $class::getLiveUrl($roomId);
                             $fileName = "{$siteName}-{$nick}-" . date('Ymd_His') . '.mp4';

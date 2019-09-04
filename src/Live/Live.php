@@ -26,6 +26,7 @@ abstract class Live
         if (!is_dir($path)) {
             mkdir(iconv("UTF-8", "GBK", $path), 0777, true);
         }
+        $fileName=iconv("UTF-8", "GBK", $fileName);
         //$cmd = "ffmpeg -ss 0:0 -t {$endTime} -i \"{$liveUrl}\" -max_muxing_queue_size 1024 {$path}/{$fileName}";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
           $cmd="ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}";
