@@ -7,9 +7,8 @@
  */
 
 namespace Gsons;
-
-use think\Cache;
 use Gsons\Live\Live;
+use think\Cache;
 
 class App
 {
@@ -19,19 +18,20 @@ class App
         $pid = getmypid();
 
         Cache::init([
-            'type' => 'File',
+            'type' => 'FileLock',
             'path' => './cache/',
             'prefix' => '',
             'expire' => 0,
         ]);
-        @Cache::clear();
+        Cache::clear();
 
         Console::init($pid);
         Console::logEOL();
         Console::log('start recording' . PHP_EOL);
 
+        $lockFile = fopen('./lock.lock', 'w+');
+        $tempLockFile = fopen('./templock.lock', 'w+');
         while (1) {
-            $lockFile = fopen('lock.lock', 'w+');
             if (flock($lockFile, LOCK_EX)) {
                 foreach ($config as $liveName => $roomIdArr) {
                     /**
@@ -54,18 +54,29 @@ class App
                         if (!in_array($roomId, array_keys($roomIdArr))) {
                             continue;
                         }
+
+                     if (flock($tempLockFile, LOCK_EX)) {
                         $room_key = $liveName . '_room_id_' . $roomId;
                         $isSet = Cache::get($room_key);
                         if ($isSet) {
                             Console::log("exist:{$siteName}-{$nick}-{$roomId}");
+                             flock($tempLockFile,LOCK_UN);
                             continue;
                         }
+                        $isSetCache=Cache::set($room_key, $roomId, 230);
+                        if(!$isSetCache){
+                             Console::error("ERROR:cant not set cache ".$room_key);
+                              flock($tempLockFile,LOCK_UN);
+                            continue;
+                        }
+                        flock($tempLockFile,LOCK_UN);
+                    }
+         
                         printf("\007");
                         $roomUrl = sprintf($class::BASE_ROOM_URL, $roomId);
-                        $logInfo = "{$siteName}-{$nick}-{$roomUrl}";
+                        $logInfo = "{$siteName}-{$nick}-{$roomUrl} isSetCache=".$isSetCache;
                         Console::log($logInfo);
                         Console::record($logInfo);
-                        Cache::set($room_key, $roomId, 230);
                         if ($record) {
                             flock($lockFile,LOCK_UN);
                             try {

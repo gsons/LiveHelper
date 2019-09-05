@@ -21,7 +21,7 @@ class Console
         self::$pid = $pid ? $pid : getmypid();
     }
 
-    public static function log($msg, $isGBK = false)
+    public static function log($msg, $isGBK = true)
     {
         if (is_array($msg)) {
             $msg = json_encode($msg, JSON_UNESCAPED_UNICODE);
