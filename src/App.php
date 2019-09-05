@@ -19,97 +19,72 @@ class App
         $pid = getmypid();
 
         Cache::init([
-            'type' => 'FileLock',
+            'type' => 'File',
             'path' => './cache/',
             'prefix' => '',
             'expire' => 0,
         ]);
-  
-        $lock=Cache::get("cache_lock");
-        if(!$lock){
-            Cache::clear();
-            Cache::set("cache_lock",1,10);
-        }
+        @Cache::clear();
 
         Console::init($pid);
         Console::logEOL();
         Console::log('start recording' . PHP_EOL);
 
-        $pidArr = Cache::get("pidArr");
-        $pidArr = $pidArr ? $pidArr : [];
-        $pidArr[] = $pid;
-        Cache::set("pidArr", $pidArr);
         while (1) {
-            $fetchPidNum = 0;
-            $pidArr = Cache::get("pidArr");
-            $pidArr = $pidArr ? $pidArr : [];
-            foreach ($pidArr as $_pid) {
-                $fetching = Cache::get('fetching_pid_' . $_pid);
-                if ($fetching&& $pid != $_pid) {
-                    $fetchPidNum++;
-                }
-            }
-            if ($fetchPidNum>0) {
-                continue;
-            }
-            Console::record("{$pid}:{$fetchPidNum}");
-            Cache::set('fetching_pid_' . $pid,$pid);
-            foreach ($config as $liveName => $roomIdArr) {
-
-                /**
-                 * @var $class \Gsons\Live\HuyaLive;
-                 */
-                $class = "\Gsons\Live\\{$liveName}Live";
-                if (!class_exists($class)) {
-                    Console::error("ERROR:cant not find class $class");
-                    continue;
-                }
-                try {
-                    $arr = $class::getDancingRoomId();
-                } catch (\ErrorException $e) {
-                    Console::error($e);
-                    continue;
-                }
-                $siteName = $class::SITE_NAME;
-                Console::log("{$siteName}:" . json_encode($arr, JSON_UNESCAPED_UNICODE));
-                foreach ($arr as $roomId => $nick) {
-                    if (!in_array($roomId, array_keys($roomIdArr))) {
+            $lockFile = fopen('lock.lock', 'w+');
+            if (flock($lockFile, LOCK_EX)) {
+                foreach ($config as $liveName => $roomIdArr) {
+                    /**
+                     * @var $class \Gsons\Live\HuyaLive;
+                     */
+                    $class = "\Gsons\Live\\{$liveName}Live";
+                    if (!class_exists($class)) {
+                        Console::error("ERROR:cant not find class $class");
                         continue;
                     }
-                    $room_key = $liveName . '_room_id_' . $roomId;
-                    $isSet = Cache::get($room_key);
-                    if ($isSet) {
-                        Console::log("exist:{$siteName}-{$nick}-{$roomId}");
+                    try {
+                        $arr = $class::getDancingRoomId();
+                    } catch (\ErrorException $e) {
+                        Console::error($e);
                         continue;
                     }
-                    printf("\007");
-                    $roomUrl = sprintf($class::BASE_ROOM_URL, $roomId);
-                    $logInfo = "{$siteName}-{$nick}-{$roomUrl}";
-                    Console::log($logInfo);
-                    Console::record($logInfo);
-                    Cache::set($room_key, $roomId, 230);
-                    if ($record) {
-                        Cache::rm('fetching_pid_' . $pid);
-                        Cache::rm('fetching_pid_' . $pid);
-                        Cache::rm('fetching_pid_' . $pid);
-                        Cache::rm('fetching_pid_' . $pid);
-                        Cache::rm('fetching_pid_' . $pid);
-                        try {
-                            $liveUrl = $class::getLiveUrl($roomId);
-                            $fileName = "{$siteName}-{$nick}-" . date('Ymd_His') . '.mp4';
-                            Live::record($liveUrl, 'video2', $fileName, 240);
-                        } catch (\ErrorException $e) {
-                            Console::error($e);
+                    $siteName = $class::SITE_NAME;
+                    Console::log("{$siteName}:" . json_encode($arr, JSON_UNESCAPED_UNICODE));
+                    foreach ($arr as $roomId => $nick) {
+                        if (!in_array($roomId, array_keys($roomIdArr))) {
+                            continue;
                         }
-                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                        $room_key = $liveName . '_room_id_' . $roomId;
+                        $isSet = Cache::get($room_key);
+                        if ($isSet) {
+                            Console::log("exist:{$siteName}-{$nick}-{$roomId}");
+                            continue;
+                        }
+                        printf("\007");
+                        $roomUrl = sprintf($class::BASE_ROOM_URL, $roomId);
+                        $logInfo = "{$siteName}-{$nick}-{$roomUrl}";
+                        Console::log($logInfo);
+                        Console::record($logInfo);
+                        Cache::set($room_key, $roomId, 230);
+                        if ($record) {
+                            flock($lockFile,LOCK_UN);
+                            try {
+                                $liveUrl = $class::getLiveUrl($roomId);
+                                $fileName = "{$siteName}-{$nick}_" . date('YmdHis') . '.mp4';
+                                $path="./video/{$siteName}/{$nick}/".date('Y-m-d');
+                                Live::record($liveUrl, $path, $fileName, 240);
+                            } catch (\ErrorException $e) {
+                                Console::error($e);
+                            }
                             break;
                         }
                     }
+                    unset($arr);
                 }
-                unset($arr);
+                Console::logEOL();
+                sleep(7);
+                flock($lockFile,LOCK_UN);
             }
-            Console::logEOL();
-            sleep(7);
         }
     }
 

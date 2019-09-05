@@ -24,12 +24,11 @@ abstract class Live
     public static function record($liveUrl, $path, $fileName, $endTime)
     {
         if (!is_dir($path)) {
-            mkdir(iconv("UTF-8", "GBK", $path), 0777, true);
+            mkdir($path, 0777, true);
         }
-        $fileName=iconv("UTF-8", "GBK", $fileName);
         //$cmd = "ffmpeg -ss 0:0 -t {$endTime} -i \"{$liveUrl}\" -max_muxing_queue_size 1024 {$path}/{$fileName}";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-          $cmd="ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}";
+          $cmd="chcp 65001 && ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}";
           exec($cmd);
         }else{ 
           $cmd="ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}"." > /dev/null &";

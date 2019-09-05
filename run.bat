@@ -1,6 +1,6 @@
 @echo off  
-start cmd /k "php test.php"
-start cmd /k "php test.php"
-start cmd /k "php test.php"
-start cmd /k "php test.php"
-start cmd /k "php test.php"
+start cmd /k "php index.php"
+start cmd /k "php index.php"
+start cmd /k "php index.php"
+start cmd /k "php index.php"
+start cmd /k "php index.php"

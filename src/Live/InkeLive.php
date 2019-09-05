@@ -58,8 +58,10 @@ class InkeLive
         $arr = [];
         if (isset($data['cards']) && !empty($data['cards'])) {
             $list = $data['cards'];
-            foreach ($list as $vo) {//print_r($vo);exit;
-                if (isset($vo['cover']['tags']['posa']['text']) && $vo['cover']['tags']['posa']['text'] == '正在热舞') {
+            foreach ($list as $vo) {
+                $isDancing1=isset($vo['cover']['tags']['posa']['text']) && $vo['cover']['tags']['posa']['text'] == '正在跳舞';
+                $isDancing2=isset($vo['cover']['tags']['posa']['text']) && $vo['cover']['tags']['posa']['text'] == '热舞中';
+                if ($isDancing1||$isDancing2) {
                     $arr[] = ['roomId' => $vo['data']['live_info']['creator']['id'], 'nickName' => $vo['data']['live_info']['creator']['nick']];
                 }
             }
