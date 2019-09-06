@@ -23,7 +23,7 @@ class CCLive extends Live implements Api
      * @return array
      * @throws \ErrorException
      */
-    public static function getLiveUrl($roomId)
+    public function getLiveUrl($roomId)
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://cc.163.com');
@@ -44,7 +44,7 @@ class CCLive extends Live implements Api
      * @return array
      * @throws \ErrorException
      */
-    public static function getDancingRoomId()
+    public function getDancingRoomId()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.huya.com/g/xingxiu');

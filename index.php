@@ -2,22 +2,11 @@
 require_once "vendor/autoload.php";
 
 use Gsons\App;
-
-/*$url =\Gsons\Live\DouYuLive::getLiveUrl(1282190);
-\Gsons\Live\DouYuLive::record($url,'./video/虎牙直播',time().'sss7.mp4',100);
-\Gsons\Live\DouYuLive::record($url,'./video/虎牙直播',time().'sss8.mp4',100);
-
-while (1){
-    sleep(1);
-    $msg=date("H:i:s").':ddddd'.PHP_EOL;
-    echo $msg;
-    file_put_contents('./cache/room.log',$msg,FILE_APPEND);
-}*/
 date_default_timezone_set("PRC");
 //需要监听的房间
 $config = [
     "HuYa" => [
-        177330 => '环星M-喵小柒II',
+/*        177330 => '环星M-喵小柒II',
         520006 => '依然是婷er',
         274748 => 'RD清妍',
         16704887 => '万古-韩六六',
@@ -33,7 +22,7 @@ $config = [
         628718 => "二狗",
         756504 => "佐佑",
         16024402 => "小考拉",
-        820297 => "Z-Miko",
+        820297 => "Z-Miko",*/
         571358 => "孙艺嫣",
         821511 => "QL-安妮",
         19394437 => "ST-薇薇安",
@@ -46,20 +35,20 @@ $config = [
     // ],
     "CC" => [
         347831124 => "七秒",
-        347946388 => "彤彤",
+/*        347946388 => "彤彤",
         346509863 => "小静静",
         347851457 => "小可Angel的",
-        346950429 => "小棱子"
+        346950429 => "小棱子"*/
     ],
     "DouYu" => [
         7130628 => "由悠",
         1360423 => "seven悠悠",
-        5469810 => "乔妹",
+/*        5469810 => "乔妹",
         6653695 => "福茶",
         7126038 => "张慕言",
         968987 => "南妹儿",
         5818349 => '米儿',
-        4632993 => '小深深儿'
+        4632993 => '小深深儿'*/
     ],
     "YY" => [
         95825545 => "漫漫",
@@ -79,5 +68,6 @@ $config = [
     ]
 ];
 
-$record_path = "./video";
+// $record_path = "./video";
+$record_path = "\\\\192.168.1.118/live_video/LiveHelper/video";
 App::run($config, true, $record_path);

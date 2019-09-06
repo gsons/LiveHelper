@@ -19,7 +19,7 @@ class EGameLive extends Live implements Api
      * @throws \ErrorException
      * @return string
      */
-    public static function getLiveUrl($roomId)
+    public function getLiveUrl($roomId)
     {
 
         $curl = new HttpCurl([], false);
@@ -41,7 +41,7 @@ class EGameLive extends Live implements Api
     }
 
     //todo 企鹅电竞暂未这个接口
-    public static function getDancingRoomId()
+    public function getDancingRoomId()
     {
 
     }

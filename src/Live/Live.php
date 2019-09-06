@@ -10,8 +10,8 @@ namespace Gsons\Live;
 
 
 namespace Gsons\Live;
+use Gsons\Console;
 
-use Gsons\HttpCurl;
 
 abstract class Live
 {
@@ -23,7 +23,7 @@ abstract class Live
      * @param $time
      * @param $isGBK
      */
-    public static function record($liveUrl, $path, $fileName, $time, $isGBK = false)
+    public function record($liveUrl, $path, $fileName, $time, $isGBK = false)
     {
         if ($isGBK) {
             $path = iconv('utf-8', 'gbk', $path);
@@ -35,10 +35,10 @@ abstract class Live
         $file = "{$path}/{$fileName}";
         $cmd = "ffmpeg -i \"{$liveUrl}\" -t {$time} -c:v copy -c:a copy {$file} -loglevel quiet";
         // $cmd='start "" cmd /k "chcp 65001 & ffmpeg -i "'.$liveUrl.'" -t '.$time.' -c:v copy -c:a copy  "'.$file.'" "';
-        self::exec($cmd);
+        $this->exec($cmd);
     }
 
-    private static function exec($cmd)
+    private function exec($cmd)
     {
         if (substr(php_uname(), 0, 7) == "Windows") {
             $cmd="start /B " . $cmd;

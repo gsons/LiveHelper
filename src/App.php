@@ -35,13 +35,14 @@ class App
                 /**
                  * @var $class \Gsons\Live\HuyaLive;
                  */
-                $class = "\Gsons\Live\\{$liveName}Live";
-                if (!class_exists($class)) {
-                    Console::error("ERROR:cant not find class $class");
+                $ClassName = "\Gsons\Live\\{$liveName}Live";
+                if (!class_exists($ClassName)) {
+                    Console::error("ERROR:cant not find class $ClassName");
                     continue;
                 }
+                $class=new $ClassName();
                 try {
-                    $arr = $class::getDancingRoomId();
+                    $arr = $class->getDancingRoomId();
                 } catch (\ErrorException $e) {
                     Console::error($e);
                     continue;
@@ -72,16 +73,17 @@ class App
                     Console::record($logInfo);
                     if ($record) {
                         try {
-                            $liveUrl = $class::getLiveUrl($roomId);
+                            $liveUrl = $class->getLiveUrl($roomId);
                             $fileName = "{$siteName}-{$nick}_" . date('YmdHis') . '.mp4';
                             $path = "{$record_path}/{$siteName}/{$nick}/" . date('Y-m-d');
-                            Live::record($liveUrl, $path, $fileName, 240);
+                            $class->record($liveUrl, $path, $fileName, 240);
                         } catch (\ErrorException $e) {
                             Console::error($e);
                         }
                     }
                 }
                 unset($arr);
+                unset($class);
             }
             Console::logEOL();
             sleep(7);

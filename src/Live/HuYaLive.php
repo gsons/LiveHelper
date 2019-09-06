@@ -21,7 +21,7 @@ class HuYaLive extends Live implements Api
      * @return array
      * @throws \ErrorException
      */
-    public static function getDancingRoomId()
+    public function getDancingRoomId()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.huya.com/g/xingxiu');
@@ -51,7 +51,7 @@ class HuYaLive extends Live implements Api
      * @return mixed
      * @throws \ErrorException
      */
-    public static function getLiveUrl($roomId)
+    public function getLiveUrl($roomId)
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://m.huya.com');

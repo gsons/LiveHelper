@@ -23,7 +23,7 @@ class InkeLive
      * @return mixed
      * @throws \ErrorException
      */
-    public static function getLiveUrl($roomId)
+    public function getLiveUrl($roomId)
     {
 
         $curl = new HttpCurl();
@@ -46,7 +46,7 @@ class InkeLive
      * @return array
      * @throws \ErrorException
      */
-    public static function getDancingRoomId()
+    public function getDancingRoomId()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('http://www.yy.com/');

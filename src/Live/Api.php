@@ -10,6 +10,6 @@ namespace Gsons\Live;
 
 interface Api
 {
-    public static function getLiveUrl($roomId);
-    public static function getDancingRoomId();
+    public function getLiveUrl($roomId);
+    public function getDancingRoomId();
 }

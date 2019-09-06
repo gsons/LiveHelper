@@ -33,6 +33,8 @@ class HttpCurl extends Curl
             $this->setOpt(CURLOPT_HEADERFUNCTION, array($this, 'addResponseHeaderLine'));
         }
         $this->setOpt(CURLOPT_SSL_VERIFYPEER, false);
+        $this->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
+        $this->setOpt(CURLOPT_SSL_VERIFYHOST, false);
 
         if (isset($config['user_agent']) && is_array($config['user_agent'])) {
             $this->userAgentArr = array_merge($this->userAgentArr, $config['user_agent']);

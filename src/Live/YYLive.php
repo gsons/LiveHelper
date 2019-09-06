@@ -18,7 +18,7 @@ class YYLive extends Live implements Api
      * @return mixed
      * @throws \ErrorException
      */
-    public static function getLiveUrl($roomId)
+    public function getLiveUrl($roomId)
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://wap.yy.com');
@@ -41,7 +41,7 @@ class YYLive extends Live implements Api
      * @return array
      * @throws \ErrorException
      */
-    public static function getDancingRoomId()
+    public function getDancingRoomId()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('http://www.yy.com/');

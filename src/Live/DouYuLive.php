@@ -23,7 +23,7 @@ class DouYuLive extends Live implements Api
     /**
      * @throws \ErrorException
      */
-    public static function getDancingRoomId()
+    public function getDancingRoomId()
     {
        $arr1=self::getDancingRoomIdByPage(1);
        // $arr2=self::getDancingRoomIdByPage(2);
@@ -37,7 +37,7 @@ class DouYuLive extends Live implements Api
      * @return array
      * @throws \ErrorException
      */
-    private static function getDancingRoomIdByPage($page){
+    private function getDancingRoomIdByPage($page){
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.douyu.com/g_yz');
         $curl->get(sprintf(self::DANCE_ROOM_API_URL,$page));
@@ -59,7 +59,7 @@ class DouYuLive extends Live implements Api
         return $arr;
     }
 
-    private static function getRandomName($len = 6)
+    private function getRandomName($len = 6)
     {
         $chars = 'abcdefghijklmnopqrstuvwxyz';
         $chars = str_shuffle($chars);
@@ -68,7 +68,7 @@ class DouYuLive extends Live implements Api
     }
 
 
-    private static function replaceTpl($names_dict, $tpl)
+    private function replaceTpl($names_dict, $tpl)
     {
         return str_replace(array_keys($names_dict), array_values($names_dict), $tpl);
     }
@@ -79,7 +79,7 @@ class DouYuLive extends Live implements Api
      * @throws \ErrorException
      * @return string
      */
-    public static function getLiveUrl($roomId)
+    public function getLiveUrl($roomId)
     {
         $names_dict = [
             '{debugMessages}' => self::getRandomName(8),
