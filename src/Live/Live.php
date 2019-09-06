@@ -10,6 +10,7 @@ namespace Gsons\Live;
 
 
 namespace Gsons\Live;
+
 use Gsons\HttpCurl;
 
 abstract class Live
@@ -19,22 +20,31 @@ abstract class Live
      * @param $liveUrl
      * @param $path
      * @param $fileName
-     * @param string $endTime
+     * @param $time
+     * @param $isGBK
      */
-    public static function record($liveUrl, $path, $fileName, $endTime)
+    public static function record($liveUrl, $path, $fileName, $time, $isGBK = false)
     {
+        if ($isGBK) {
+            $path = iconv('utf-8', 'gbk', $path);
+            $fileName = iconv('utf-8', 'gbk', $fileName);
+        }
         if (!is_dir($path)) {
-            $path=iconv('utf-8', 'gbk',$path);
             mkdir($path, 0777, true);
         }
-        $fileName=iconv('utf-8', 'gbk',$fileName);
-        //$cmd = "ffmpeg -ss 0:0 -t {$endTime} -i \"{$liveUrl}\" -max_muxing_queue_size 1024 {$path}/{$fileName}";
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-          $cmd="chcp 65001 && ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}";
-          exec($cmd);
-        }else{ 
-          $cmd="ffmpeg -i \"{$liveUrl}\" -t {$endTime} -c:v copy -c:a copy  {$path}/{$fileName}"." > /dev/null &";
-          shell_exec($cmd);
+        $file = "{$path}/{$fileName}";
+        $cmd = "ffmpeg -i \"{$liveUrl}\" -t {$time} -c:v copy -c:a copy {$file} -loglevel quiet";
+        // $cmd='start "" cmd /k "chcp 65001 & ffmpeg -i "'.$liveUrl.'" -t '.$time.' -c:v copy -c:a copy  "'.$file.'" "';
+        self::exec($cmd);
+    }
+
+    private static function exec($cmd)
+    {
+        if (substr(php_uname(), 0, 7) == "Windows") {
+            $cmd="start /B " . $cmd;
+            pclose(popen($cmd, "r"));
+        } else {
+            exec($cmd . " > /dev/null &");
         }
     }
 }
