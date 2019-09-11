@@ -55,4 +55,8 @@ class HttpCurl extends Curl
         }
     }
 
+    public function __destruct()
+    {
+        parent::__destruct();
+    }
 }

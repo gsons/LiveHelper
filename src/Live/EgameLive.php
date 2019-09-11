@@ -26,6 +26,7 @@ class EGameLive extends Live implements Api
         $curl->setReferrer('https://egame.qq.com');
         $roomUrl = sprintf(self::BASE_ROOM_URL, $roomId);
         $curl->get($roomUrl);
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }

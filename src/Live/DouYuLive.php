@@ -42,6 +42,7 @@ class DouYuLive extends Live implements Api
         $curl->setReferrer('https://www.douyu.com/g_yz');
         $curl->get(sprintf(self::DANCE_ROOM_API_URL,$page));
         $data = json_decode($curl->response, true);
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }
@@ -141,7 +142,7 @@ EOF;
         $apiUrl = sprintf(self::ENC_URL, $roomId);
         $curl->get($apiUrl);
         $data = json_decode($curl->response, true);
-
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($apiUrl.'=>'.$curl->error_message);
         }
@@ -169,7 +170,9 @@ EOF;
                     'ive'=>0
                 ];
                 $liveUrl=sprintf(self::GET_LIVE_URL,$roomId);
+                $curl = new HttpCurl();
                 $res=$curl->post($liveUrl,$param);
+                $curl->close();
                 if ($curl->error) {
                     throw new \ErrorException($liveUrl.'=>'.$curl->error_message);
                 }

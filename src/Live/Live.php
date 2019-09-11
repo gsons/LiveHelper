@@ -10,7 +10,6 @@ namespace Gsons\Live;
 
 
 namespace Gsons\Live;
-use Gsons\Console;
 
 
 abstract class Live
@@ -23,7 +22,7 @@ abstract class Live
      * @param $time
      * @param $isGBK
      */
-    public function record($liveUrl, $path, $fileName, $time, $isGBK = false)
+    public  function record($liveUrl, $path, $fileName, $time, $isGBK = true)
     {
         if ($isGBK) {
             $path = iconv('utf-8', 'gbk', $path);
@@ -38,7 +37,7 @@ abstract class Live
         $this->exec($cmd);
     }
 
-    private function exec($cmd)
+    private  function exec($cmd)
     {
         if (substr(php_uname(), 0, 7) == "Windows") {
             $cmd="start /B " . $cmd;

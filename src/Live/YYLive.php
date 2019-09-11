@@ -25,6 +25,10 @@ class YYLive extends Live implements Api
         $roomUrl = sprintf(self::BASE_LIVE_URL,$roomId, $roomId);
         $curl->get($roomUrl);
         $html = $curl->response;
+        $curl->close();
+        if ($curl->error) {
+            throw new \ErrorException($curl->error_message);
+        }
         preg_match("/jsonp2\((.*?)\)/", $html, $match);
         if (isset($match[1]) && $match[1]) {
             $jsonArr = json_decode($match[1], true);
@@ -47,6 +51,7 @@ class YYLive extends Live implements Api
         $curl->setReferrer('http://www.yy.com/');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }

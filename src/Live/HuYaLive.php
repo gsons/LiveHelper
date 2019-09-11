@@ -27,6 +27,7 @@ class HuYaLive extends Live implements Api
         $curl->setReferrer('https://www.huya.com/g/xingxiu');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }
@@ -57,6 +58,7 @@ class HuYaLive extends Live implements Api
         $curl->setReferrer('https://m.huya.com');
         $roomUrl = sprintf(self::BASE_LIVE_URL, $roomId);
         $curl->get($roomUrl);
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }

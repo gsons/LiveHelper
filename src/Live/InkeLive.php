@@ -31,6 +31,7 @@ class InkeLive
         $roomUrl = sprintf(self::BASE_LIVE_URL, $roomId);
         $curl->get($roomUrl);
         $data = json_decode($curl->response, true);
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }
@@ -52,6 +53,7 @@ class InkeLive
         $curl->setReferrer('http://www.yy.com/');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
+        $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }
