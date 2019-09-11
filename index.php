@@ -70,4 +70,4 @@ $config = [
 
  $record_path = "./video";
   $record_path = "\\\\192.168.1.118/live_video/LiveHelper/video";
-App::run($config, true, $record_path);
+App::run($config, true, $record_path,false);

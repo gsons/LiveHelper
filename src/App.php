@@ -13,7 +13,7 @@ use think\Cache;
 
 class App
 {
-    public static function run($config, $record = false, $record_path = "./video")
+    public static function run($config, $record = false, $isGBK=false,$record_path = "./video")
     {
         Cache::init([
             'type' => 'File',
@@ -76,7 +76,7 @@ class App
                             $liveUrl = $class->getLiveUrl($roomId);
                             $fileName = "{$siteName}-{$nick}_" . date('YmdHis') . '.mp4';
                             $path = "{$record_path}/{$siteName}/{$nick}/" . date('Y-m-d');
-                            $class->record($liveUrl, $path, $fileName, 240);
+                            $class->record($liveUrl, $path, $fileName, 240,$isGBK);
                         } catch (\ErrorException $e) {
                             Console::error($e);
                         }
