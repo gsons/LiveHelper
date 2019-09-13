@@ -21,6 +21,8 @@ class HttpCurl extends Curl
         '192.168.64.1'
     ];
 
+    const TIME_OUT=15;
+
     public function __construct($config = [], $init = true)
     {
         if ($init) {
@@ -35,7 +37,7 @@ class HttpCurl extends Curl
         $this->setOpt(CURLOPT_SSL_VERIFYPEER, false);
         $this->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
         $this->setOpt(CURLOPT_SSL_VERIFYHOST, false);
-
+        $this->setOpt(CURLOPT_TIMEOUT, self::TIME_OUT);
         if (isset($config['user_agent']) && is_array($config['user_agent'])) {
             $this->userAgentArr = array_merge($this->userAgentArr, $config['user_agent']);
         }
