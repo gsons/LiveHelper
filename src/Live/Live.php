@@ -21,8 +21,9 @@ abstract class Live
      * @param $fileName
      * @param $time
      * @param $isGBK
+     * @return resource
      */
-    public  function record($liveUrl, $path, $fileName, $time, $isGBK = true)
+    public static function record($liveUrl, $path, $fileName, $time, $isGBK = true)
     {
         if ($isGBK) {
             $path = iconv('utf-8', 'gbk', $path);
@@ -34,10 +35,11 @@ abstract class Live
         $file = "{$path}/{$fileName}";
         $cmd = "ffmpeg -i \"{$liveUrl}\" -t {$time} -c:v copy -c:a copy {$file} -loglevel quiet";
         // $cmd='start "" cmd /k "chcp 65001 & ffmpeg -i "'.$liveUrl.'" -t '.$time.' -c:v copy -c:a copy  "'.$file.'" "';
-        $this->exec($cmd);
+        $process=proc_open($cmd,[['pipe','r']],$pipes);
+        return $process;
     }
 
-    private  function exec($cmd)
+/*    private  function exec($cmd)
     {
         if (substr(php_uname(), 0, 7) == "Windows") {
             $cmd="start /B " . $cmd;
@@ -45,6 +47,6 @@ abstract class Live
         } else {
             exec($cmd . " > /dev/null &");
         }
-    }
+    }*/
 }
 
