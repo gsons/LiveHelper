@@ -64,7 +64,7 @@ class InkeLive
                 $isDancing1=isset($vo['cover']['tags']['posa']['text']) && $vo['cover']['tags']['posa']['text'] == '正在跳舞';
                 $isDancing2=isset($vo['cover']['tags']['posa']['text']) && $vo['cover']['tags']['posa']['text'] == '热舞中';
                 if ($isDancing1||$isDancing2) {
-                    $arr[] = ['roomId' => $vo['data']['live_info']['creator']['id'], 'nickName' => $vo['data']['live_info']['creator']['nick']];
+                    $arr[] = ['roomId' => intval($vo['data']['live_info']['creator']['id']), 'nickName' => $vo['data']['live_info']['creator']['nick']];
                 }
             }
             $arr = array_column($arr, 'nickName', 'roomId');
