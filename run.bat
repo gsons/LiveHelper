@@ -1,1 +1,1 @@
-php index.php
+chcp 65001 && php index.php

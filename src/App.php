@@ -76,12 +76,15 @@ class App
                     if ($record) {
                         try {
                             $liveUrl = $class->getLiveUrl($roomId);
+                            //防止昵称出现特殊字符导致ffmpeg无法识别文件路径
+                            $nick = preg_replace('#[^\x{4e00}-\x{9fa5}A-Za-z0-9]#u', '', $nick);
                             $fileName = "{$siteName}-{$nick}_" . date('YmdHis') . '.mp4';
                             $path = "{$record_path}/{$siteName}/{$nick}/" . date('Y-m-d');
-                            $process= Live::record($liveUrl, $path, $fileName, 240, $isGBK);
-                            self::$recordProcessArr[$room_key]=$process;
+                            Console::log($liveUrl);
+                            $process = Live::record($liveUrl, $path, $fileName, 240, $isGBK);
+                            self::$recordProcessArr[$room_key] = $process;
                             $res = proc_get_status($process);
-                            Console::record("录制进程ID({$res['pid']})已开启:{$room_key}");
+                            Console::log("录制进程ID({$res['pid']})已开启:{$room_key}");
                         } catch (\ErrorException $e) {
                             Console::error($e);
                         }
@@ -92,19 +95,22 @@ class App
             }
             self::checkRecordProcess();
             Console::logEOL();
-            sleep(6);
+            sleep(7);
         }
     }
 
     public static function checkRecordProcess()
     {
         if (!empty(self::$recordProcessArr)) {
-            foreach (self::$recordProcessArr as $roomKey => $process) {
-                $res = proc_get_status($process);
-                if (isset($res['running']) && $res['running'] != 1) {
-                    Cache::rm($roomKey);
-                    Console::record("录制进程ID({$res['pid']})已关闭:{$roomKey}");
-                    proc_close($process);
+            foreach (self::$recordProcessArr as $roomKey => &$process) {
+                if (is_resource($process)) {
+                    $res = proc_get_status($process);
+                    if (isset($res['running']) && $res['running'] != 1) {
+                        Cache::rm($roomKey);
+                        Console::log("录制进程ID({$res['pid']})已关闭:{$roomKey}");
+                        proc_close($process);
+                        unset($process);
+                    }
                 }
             }
         }

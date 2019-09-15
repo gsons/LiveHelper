@@ -1,4 +1,4 @@
-﻿<?php
+﻿﻿<?php
 require_once "vendor/autoload.php";
 
 use Gsons\App;
