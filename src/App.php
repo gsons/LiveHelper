@@ -77,10 +77,10 @@ class App
                         try {
                             $liveUrl = $class->getLiveUrl($roomId);
                             //防止昵称出现特殊字符导致ffmpeg无法识别文件路径
-                            $nick = preg_replace('#[^\x{4e00}-\x{9fa5}A-Za-z0-9]#u', '', $nick);
+                            $nick = self::filterNick($nick);
                             $fileName = "{$siteName}-{$nick}_" . date('YmdHis') . '.mp4';
                             $path = "{$record_path}/{$siteName}/{$nick}/" . date('Y-m-d');
-                            Console::log($liveUrl);
+                            Console::record($liveUrl);
                             $process = Live::record($liveUrl, $path, $fileName, 240, $isGBK);
                             self::$recordProcessArr[$room_key] = $process;
                             $res = proc_get_status($process);
@@ -114,5 +114,15 @@ class App
                 }
             }
         }
+    }
+
+    // 过滤掉emoji表情
+    private static function filterNick($str)
+    {
+        $str=str_replace(' ','',$str);
+        $str = preg_replace_callback('/./u', function (array $match) {
+            return strlen($match[0]) >= 4 ? '' : $match[0];
+        }, $str);
+        return $str;
     }
 }
