@@ -10,7 +10,7 @@ namespace Gsons\Live;
 
 use Gsons\HttpCurl;
 
-class DouYuLive extends Live implements Api
+class DouYuLive extends Live
 {
     const SITE_NAME = "斗鱼直播";
     const BASE_ROOM_URL = "https://www.douyu.com/%s";

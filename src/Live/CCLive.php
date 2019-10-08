@@ -11,7 +11,7 @@ namespace Gsons\Live;
 use Gsons\HttpCurl;
 
 
-class CCLive extends Live implements Api
+class CCLive extends Live
 {
     const SITE_NAME = "CC直播";
     const BASE_ROOM_URL = "https://cc.163.com/%s";

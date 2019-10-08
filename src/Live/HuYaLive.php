@@ -10,7 +10,7 @@ namespace Gsons\Live;
 
 use Gsons\HttpCurl;
 
-class HuYaLive extends Live implements Api
+class HuYaLive extends Live
 {
     const SITE_NAME = "虎牙直播";
     const BASE_ROOM_URL = "https://www.huya.com/%s";

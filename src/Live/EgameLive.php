@@ -10,7 +10,7 @@ namespace Gsons\Live;
 
 use Gsons\HttpCurl;
 
-class EGameLive extends Live implements Api
+class EGameLive extends Live
 {
     const BASE_ROOM_URL = "https://egame.qq.com/%s";
     const SITE_NAME = "企鹅电竞";

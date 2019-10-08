@@ -8,12 +8,12 @@
 
 namespace Gsons\Live;
 
-
-namespace Gsons\Live;
-
-
-abstract class Live
+abstract class Live implements Api
 {
+
+    abstract function getLiveUrl($roomId);
+    abstract function getDancingRoomId();
+
     /**
      * 录制直播视频
      * @param $liveUrl

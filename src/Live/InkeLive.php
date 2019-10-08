@@ -10,7 +10,7 @@ namespace Gsons\Live;
 
 use Gsons\HttpCurl;
 
-class InkeLive
+class InkeLive extends Live
 {
 
     const SITE_NAME = "映客直播";

@@ -80,7 +80,7 @@ class App
                             $nick = self::filterNick($nick);
                             $fileName = "{$siteName}-{$nick}_" . date('YmdHis') . '.mp4';
                             $path = "{$record_path}/{$siteName}/{$nick}/" . date('Y-m-d');
-                            Console::record($liveUrl);
+                            Console::log($liveUrl);
                             $process = Live::record($liveUrl, $path, $fileName, 240, $isGBK);
                             self::$recordProcessArr[$room_key] = $process;
                             $res = proc_get_status($process);

@@ -7,7 +7,7 @@
  */
 namespace Gsons\Live;
 use Gsons\HttpCurl;
-class YYLive extends Live implements Api
+class YYLive extends Live
 {
     const SITE_NAME = "YY直播";
     const BASE_ROOM_URL = "https://www.yy.com/%s";
