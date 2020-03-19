@@ -65,7 +65,7 @@ class HuYaLive extends Live
         $html = $curl->response;
         preg_match("/hasvedio: \'(.*?)\'/", $html, $match);
         if (isset($match[1]) && $match[1]) {
-            return str_replace('_1200', '', $match[1]);
+            return 'https:'.str_replace('_1200', '', $match[1]);
         } else {
             throw new \ErrorException("maybe not exist the roomId {$roomId}");
         }

@@ -60,6 +60,7 @@ class Console
             $msg = "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
 
             $trace = $param->getTrace();
+            // print_r($trace);
             foreach ($trace as $key => $stackPoint) {
                 $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
             }
@@ -69,10 +70,10 @@ class Console
                 $result[] = sprintf(
                     $traceline,
                     $key,
-                    $stackPoint['file'],
-                    $stackPoint['line'],
-                    $stackPoint['function'],
-                    implode(', ', $stackPoint['args'])
+                    isset($stackPoint['file'])?$stackPoint['file']:'',
+                    isset($stackPoint['line'])?$stackPoint['line']:'',
+                    isset($stackPoint['function'])?$stackPoint['function']:'',
+                    implode(', ', isset($stackPoint['args'])?$stackPoint['args']:'')
                 );
             }
             $result[] = '#' . ++$key . ' {main}';
