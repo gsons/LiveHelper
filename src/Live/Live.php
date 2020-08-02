@@ -13,6 +13,7 @@ abstract class Live implements Api
 
     abstract function getLiveUrl($roomId);
     abstract function getDancingRoomId();
+    abstract function getAvRoomId();
 
     /**
      * 录制直播视频

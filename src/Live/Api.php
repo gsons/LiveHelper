@@ -12,4 +12,5 @@ interface Api
 {
     public function getLiveUrl($roomId);
     public function getDancingRoomId();
+    public function getAvRoomId();
 }

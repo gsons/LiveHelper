@@ -47,5 +47,8 @@ class EGameLive extends Live
 
     }
 
+    public function getAvRoomId(){
+
+    }
 
 }

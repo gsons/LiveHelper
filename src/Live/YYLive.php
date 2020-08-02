@@ -68,4 +68,8 @@ class YYLive extends Live
         unset($data);
         return $arr;
     }
+
+    public function getAvRoomId(){
+
+    }
 }

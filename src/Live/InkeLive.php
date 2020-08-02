@@ -73,4 +73,8 @@ class InkeLive extends Live
         return $arr;
 
     }
+
+    public function getAvRoomId(){
+
+    }
 }

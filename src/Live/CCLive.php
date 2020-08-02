@@ -17,7 +17,6 @@ class CCLive extends Live
     const BASE_ROOM_URL = "https://cc.163.com/%s";
     const BASE_LIVE_URL = "http://cgi.v.cc.163.com/video_play_url/%s";
     const DANCE_ROOM_API_URL = "http://cc.163.com/wdf/game_lives/?gametype=65005&tag_id=79&format=json&start=0&size=100";
-
     /**
      * @param $roomId
      * @return array
@@ -67,5 +66,9 @@ class CCLive extends Live
         }
         unset($data);
         return $arr;
+    }
+
+    public function getAvRoomId(){
+
     }
 }

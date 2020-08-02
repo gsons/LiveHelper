@@ -3,7 +3,7 @@ require_once "vendor/autoload.php";
 use Gsons\App;
 date_default_timezone_set("PRC");
 
-\Gsons\lib\Error::register();
+ \Gsons\lib\Error::register();
 
 //需要监听的房间
 $config = [
@@ -78,5 +78,5 @@ $config = [
 ];
 
 $record_path = "./video";
-App::run($config, true, false,$record_path);
+App::run($config, true, true,$record_path);
 // App::run($config, true, true,$record_path);

@@ -20,6 +20,10 @@ class DouYuLive extends Live
     const GET_LIVE_URL="https://www.douyu.com/lapi/live/getH5Play/%s";
 
 
+    public function getAvRoomId(){
+
+    }
+
     /**
      * @throws \ErrorException
      */
