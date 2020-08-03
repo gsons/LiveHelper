@@ -24,9 +24,7 @@ class App
             'expire' => 0,
         ]);
         Cache::clear();
-
-        $pid = getmypid();
-        Console::init($pid);
+        
         Console::logEOL();
 
         printf("\007");

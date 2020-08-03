@@ -16,7 +16,7 @@ class HuYaLive extends Live
     const BASE_ROOM_URL = "https://www.huya.com/%s";
     const BASE_LIVE_URL = "https://m.huya.com/%s";
     const DANCE_ROOM_API_URL = "https://www.huya.com/cache.php?m=LiveList&do=getTmpLiveByPage&gameId=1663&tmpId=116&page=1";
-    const AV_ROOM_URL="https://www.huya.com/cache.php?m=LiveList&do=getLiveListByPage&gameId=2135&tagAll=0&page=1";
+    const AV_ROOM_URL="https://www.huya.com/cache.php?m=LiveList&do=getLiveListByPage&gameId=2135&tagAll=0&page=%s";
     /**
      * @return array
      * @throws \ErrorException
@@ -82,7 +82,7 @@ class HuYaLive extends Live
     {
         $curl = new HttpCurl([],false);
         $curl->setReferrer('https://www.huya.com');
-        $roomUrl = sprintf(self::BASE_LIVE_URL, $roomId);
+        $roomUrl = sprintf(self::BASE_ROOM_URL, $roomId);
         $curl->get($roomUrl);
         $curl->close();
         if ($curl->error) {
@@ -127,6 +127,7 @@ class HuYaLive extends Live
         $curl = new HttpCurl();
         $curl->setReferrer('https://m.huya.com');
         $roomUrl = sprintf(self::AV_ROOM_URL, $page);
+        $curl->setOpt(CURLOPT_TIMEOUT, 10);
         $curl->get($roomUrl);
         $curl->close();
         if ($curl->error) {
@@ -148,7 +149,6 @@ class HuYaLive extends Live
     }
 
     /**
-     * @param int $page
      * @throws \ErrorException
      * @return array
      */

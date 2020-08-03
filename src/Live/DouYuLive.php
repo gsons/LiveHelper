@@ -19,9 +19,47 @@ class DouYuLive extends Live
     const ENC_URL = "https://www.douyu.com/swf_api/homeH5Enc?rids=%s";
     const GET_LIVE_URL="https://www.douyu.com/lapi/live/getH5Play/%s";
 
+    const AV_ROOM_URL="https://www.douyu.com/gapi/rkc/directory/mixList/2_208/%s";
 
+
+    /**
+     * @param array $arr
+     * @param int $page
+     * @throws \ErrorException
+     * @return array
+     */
+    private function getAvRoomIdList($arr=[],$page=1){
+        $curl = new HttpCurl();
+        $curl->setReferrer('https://www.douyu.com/g_yqk');
+        $roomUrl = sprintf(self::AV_ROOM_URL, $page);
+        $curl->setOpt(CURLOPT_TIMEOUT, 10);
+        $curl->get($roomUrl);
+        $curl->close();
+        if ($curl->error) {
+            throw new \ErrorException($curl->error_message);
+        }
+        $data = json_decode($curl->response, true);
+        $dataArr=$data['data']['rl'];
+        $dataArr=array_column($dataArr,'rn','rid');
+        if(isset($data['data']['pgcnt'])){
+            if($page<$data['data']['pgcnt']){
+                return $arr+$this->getAvRoomIdList($dataArr,$page+1);
+            }else{
+                return $dataArr;
+            }
+
+        }else{
+            return  [];
+        }
+    }
+
+
+    /**
+     * @return array
+     * @throws \ErrorException
+     */
     public function getAvRoomId(){
-
+        return $this->getAvRoomIdList();
     }
 
     /**
