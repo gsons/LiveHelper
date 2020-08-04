@@ -39,12 +39,10 @@ class YYLive extends Live
             $jsonArr = json_decode($match[1], true);
             if (isset($jsonArr['hls'])) {
                 return $jsonArr['hls'];
-            } else {
-                throw new \ErrorException("maybe not exist the roomId {$roomId}");
             }
-        } else {
-            throw new \ErrorException("maybe not exist the roomId {$roomId}");
         }
+        throw new \ErrorException("failed to get live url {$roomId}");
+
     }
 
     /**

@@ -8,11 +8,25 @@
 
 namespace Gsons\Live;
 
-abstract class Live implements Api
+abstract class Live
 {
 
+    /**
+     * 获取直播地址
+     * @param $roomId
+     * @return mixed
+     */
     abstract function getLiveUrl($roomId);
+
+    /**
+     * 获取
+     * @return array
+     */
     abstract function getDancingRoomId();
+
+    /**
+     * @return array
+     */
     abstract function getAvRoomId();
 
     /**
@@ -40,7 +54,7 @@ abstract class Live implements Api
         return $process;
     }
 
-/*    private  function exec($cmd)
+    private  function exec($cmd)
     {
         if (substr(php_uname(), 0, 7) == "Windows") {
             $cmd="start /B " . $cmd;
@@ -48,6 +62,6 @@ abstract class Live implements Api
         } else {
             exec($cmd . " > /dev/null &");
         }
-    }*/
+    }
 }
 

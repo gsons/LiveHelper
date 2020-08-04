@@ -13,8 +13,8 @@ use Gsons\HttpCurl;
 
 class TvRoom
 {
-// const TV_URL="http://192.168.101.13:2020/savediy";
- const TV_URL="http://192.168.101.6:2020/savediy";
+ const TV_URL="http://192.168.101.13:2020/savediy";
+// const TV_URL="http://192.168.101.6:2020/savediy";
 
     /**
      * @param $arrList

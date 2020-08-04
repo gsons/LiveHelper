@@ -69,7 +69,7 @@ class HuYaLive extends Live
             exec('node js/hy_decode.js'.' "'.$url.'"', $var);
             return $var[0];
         } else {
-            throw new \ErrorException("maybe not exist the roomId {$roomId}");
+            throw new \ErrorException("failed to get live url {$roomId}");
         }
     }
 
@@ -112,7 +112,7 @@ class HuYaLive extends Live
             }
             return $liveList;
         } else {
-            throw new \ErrorException("maybe not exist the roomId {$roomId}");
+            throw new \ErrorException("failed to get live url {$roomId}");
         }
     }
 

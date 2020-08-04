@@ -38,7 +38,7 @@ class InkeLive extends Live
         if (isset($data['data']['live_addr'][0]['hls_stream_addr'])) {
             return $data['data']['live_addr'][0]['hls_stream_addr'];
         } else {
-            throw new \ErrorException("maybe not exist the roomId {$roomId}");
+            throw new \ErrorException("failed to get live url {$roomId}");
         }
     }
 

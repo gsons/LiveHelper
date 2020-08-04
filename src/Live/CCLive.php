@@ -36,7 +36,7 @@ class CCLive extends Live
         if (isset($data['videourl'])) {
             return $data['videourl'];
         } else {
-            throw new \ErrorException("maybe not exist the roomId {$roomId}");
+            throw new \ErrorException("failed to get live url {$roomId}");
         }
     }
 

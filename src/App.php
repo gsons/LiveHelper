@@ -91,9 +91,9 @@ class App
                 unset($arr);
                 unset($class);
             }
-            self::checkRecordProcess();
             Console::logEOL();
             sleep(7);
+            self::checkRecordProcess();
         }
     }
 
@@ -103,7 +103,7 @@ class App
             foreach (self::$recordProcessArr as $roomKey => &$process) {
                 if (is_resource($process)) {
                     $res = proc_get_status($process);
-                    if (isset($res['running']) && $res['running'] != 1) {
+                    if (isset($res['running'])&&!$res['running']) {
                         Cache::rm($roomKey);
                         Console::log("录制进程ID({$res['pid']})已关闭:{$roomKey}");
                         proc_close($process);
