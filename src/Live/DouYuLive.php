@@ -12,7 +12,7 @@ use Gsons\HttpCurl;
 
 class DouYuLive extends Live
 {
-    const SITE_NAME = "斗鱼直播";
+    const SITE_NAME = "斗鱼直播";const SITE_CODE="DouYu";
     const BASE_ROOM_URL = "https://www.douyu.com/%s";
     //https://www.douyu.com/gapi/rkc/directory/3_1122/1
     const DANCE_ROOM_API_URL = "https://www.douyu.com/gapi/rkc/directory/2_1008/%s";
@@ -93,7 +93,7 @@ class DouYuLive extends Live
             $list = $data['data']['rl'];
             foreach ($list as $vo) {
                 if (isset($vo['icv1'][1][0]['id']) && $vo['icv1'][1][0]['id'] == '656' || isset($vo['icv1'][1][0]['id']) && $vo['icv1'][1][0]['id'] == '655') {
-                    $arr[] = ['roomId' => $vo['rid'], 'nickName' => $vo['nn']];
+                   $arr[] = ['roomId' => $vo['rid'], 'nickName' => $vo['nn']];
                 }
             }
             $arr = array_column($arr, 'nickName', 'roomId');
@@ -223,5 +223,39 @@ EOF;
             }
         }
         throw new \ErrorException("API error");
+    }
+
+    /**
+     * @return array|mixed
+     * @throws \ErrorException
+     */
+    function getHotNumArr()
+    {
+        $curl = new HttpCurl();
+        $curl->setReferrer('https://www.douyu.com/g_yz');
+        $curl->get(sprintf(self::DANCE_ROOM_API_URL,1));
+        $data = json_decode($curl->response, true);
+        $curl->close();
+        if ($curl->error) {
+            throw new \ErrorException($curl->error_message);
+        }
+        $arr = [];
+        if (isset($data['data']['rl']) && !empty($data['data']['rl'])) {
+            $list = $data['data']['rl'];
+            foreach ($list as $vo){
+                $time=time();
+                $arr[]=[
+                    'site_name' => self::SITE_NAME,
+                    'site_code' => self::SITE_CODE,
+                    'nick_name' => $vo['nn'],
+                    'room_id' => $vo['rid'],
+                    'room_url' => sprintf(self::BASE_ROOM_URL,$vo['rid']),
+                    'record_date' => date('Y-m-d H:i:s',$time),
+                    'record_time' => $time,
+                    'hot_num' => $vo['ol']
+                ];
+            }
+        }
+        return $arr;
     }
 }

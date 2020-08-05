@@ -11,18 +11,9 @@ require_once "vendor/autoload.php";
 use think\Cache;
 use Gsons\lib\TvRoom;
 
-date_default_timezone_set("PRC");
-\Gsons\lib\Error::register();
+\Gsons\App::init();
 
-Cache::init([
-    'type' => 'File',
-    'path' => './cache/',
-    'prefix' => '',
-    'expire' => 0,
-]);
-
-
-$config = ['YY' => 'YY直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'Egame' => '企鹅电竞'];
+$config = ['CC' => 'CC直播', 'YY' => 'YY直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'Egame' => '企鹅电竞'];
 
 $temp = Cache::get('TV_LIVE_URL');
 if ($temp) {

@@ -17,6 +17,8 @@ class CCLive extends Live
     const BASE_ROOM_URL = "https://cc.163.com/%s";
     const BASE_LIVE_URL = "http://cgi.v.cc.163.com/video_play_url/%s";
     const DANCE_ROOM_API_URL = "http://cc.163.com/wdf/game_lives/?gametype=65005&tag_id=79&format=json&start=0&size=100";
+    const TV_ROOM_API_URL="https://cc.163.com/wdf/game_lives/?gametype=65004&tag_id=0&format=json&start=%s&size=%s&uid=0&sn=3a0ccca0-127b-4ca8-89fe-76c4d5382496&os=web";
+
     /**
      * @param $roomId
      * @return array
@@ -47,7 +49,7 @@ class CCLive extends Live
     public function getDancingRoomId()
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.huya.com/g/xingxiu');
+        $curl->setReferrer('https://cc.163.com');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
         $curl->close();
@@ -68,7 +70,45 @@ class CCLive extends Live
         return $arr;
     }
 
-    public function getAvRoomId(){
+    /**
+     * @param $page
+     * @throws \ErrorException
+     * @return array
+     */
+    public function getAvRoomIdArr($page=1){
+        $curl = new HttpCurl();
+        $curl->setReferrer('https://cc.163.com');
+        $row=10;$url=sprintf(self::TV_ROOM_API_URL,($page-1)*$row,$row);
+        $curl->get($url);
+        $curl->close();
+        if ($curl->error) {
+            throw new \ErrorException($curl->error_message);
+        }
+        $data = json_decode($curl->response, true);
+        $dataArr=  isset($data['lives']) && !empty($data['lives'])?array_column($data['lives'], 'title', 'ccid'):[];
+        $pageNum=ceil($data['total']/$row);
+        if($page<$pageNum){
+            $temp=$dataArr+$this->getAvRoomIdArr($page+1);
+            return $temp;
+        }else{
+            return $dataArr;
+        }
 
     }
+
+
+    /**
+     * @return array
+     * @throws \ErrorException
+     */
+    public function getAvRoomId(){
+        return $this->getAvRoomIdArr();
+    }
+
+    function getHotNumArr()
+    {
+        // TODO: Implement getHotNumArr() method.
+    }
+
+
 }

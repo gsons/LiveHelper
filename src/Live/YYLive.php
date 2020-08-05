@@ -89,4 +89,8 @@ class YYLive extends Live
         $data = json_decode($curl->response, true);
         return isset($data['data']['data']) ? array_column($data['data']['data'], 'desc', 'sid') : [];
     }
+    function getHotNumArr()
+    {
+        // TODO: Implement getHotNumArr() method.
+    }
 }

@@ -77,4 +77,9 @@ class InkeLive extends Live
     public function getAvRoomId(){
 
     }
+
+    function getHotNumArr()
+    {
+        // TODO: Implement getHotNumArr() method.
+    }
 }

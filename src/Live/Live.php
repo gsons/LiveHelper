@@ -10,7 +10,6 @@ namespace Gsons\Live;
 
 abstract class Live
 {
-
     /**
      * 获取直播地址
      * @param $roomId
@@ -28,6 +27,12 @@ abstract class Live
      * @return array
      */
     abstract function getAvRoomId();
+
+    /**
+     * 统计热门跳舞直播间
+     * @return mixed
+     */
+    abstract function getHotNumArr();
 
     /**
      * 录制直播视频
@@ -50,14 +55,14 @@ abstract class Live
         $file = "{$path}/{$fileName}";
         $cmd = "ffmpeg -i \"{$liveUrl}\" -t {$time} -c:v copy -c:a copy {$file} -loglevel quiet";
         // $cmd='start "" cmd /k "chcp 65001 & ffmpeg -i "'.$liveUrl.'" -t '.$time.' -c:v copy -c:a copy  "'.$file.'" "';
-        $process=proc_open($cmd,[['pipe','r']],$pipes);
+        $process = proc_open($cmd, [['pipe', 'r']], $pipes);
         return $process;
     }
 
-    private  function exec($cmd)
+    private function exec($cmd)
     {
         if (substr(php_uname(), 0, 7) == "Windows") {
-            $cmd="start /B " . $cmd;
+            $cmd = "start /B " . $cmd;
             pclose(popen($cmd, "r"));
         } else {
             exec($cmd . " > /dev/null &");

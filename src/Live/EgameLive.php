@@ -86,7 +86,7 @@ class EGameLive extends Live
         throw new \ErrorException('failed to get live url');
     }
 
-    //todo 企鹅电竞暂未这个正在跳舞的接口
+    //todo 企鹅电竞暂未正在跳舞的接口
     public function getDancingRoomId()
     {
         return [];
@@ -97,6 +97,11 @@ class EGameLive extends Live
      */
     public function getAvRoomId(){
         return $this->getAvRoomIdList();
+    }
+
+    function getHotNumArr()
+    {
+        // TODO: Implement getHotNumArr() method.
     }
 
 }

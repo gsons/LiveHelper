@@ -52,5 +52,9 @@ class HuajiaoLive extends  Live
         return [];
     }
 
+    function getHotNumArr()
+    {
+        // TODO: Implement getHotNumArr() method.
+    }
 
 }

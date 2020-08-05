@@ -8,8 +8,10 @@
 
 namespace Gsons;
 
+use Gsons\lib\Error;
 use Gsons\Live\Live;
 use think\Cache;
+use think\Db;
 
 class App
 {
@@ -17,14 +19,8 @@ class App
 
     public static function run($config, $record = false, $isGBK = false, $record_path = "./video")
     {
-        Cache::init([
-            'type' => 'File',
-            'path' => './cache/',
-            'prefix' => '',
-            'expire' => 0,
-        ]);
+
         Cache::clear();
-        
         Console::logEOL();
 
         printf("\007");
@@ -32,6 +28,7 @@ class App
 
         while (1) {
             foreach ($config as $liveName => $roomIdArr) {
+                $roomIdArr=$roomIdArr+self::getHotConfig($liveName,2*24*24,10);
                 /**
                  * @var $class \Gsons\Live\HuyaLive;
                  */
@@ -92,7 +89,7 @@ class App
                 unset($class);
             }
             Console::logEOL();
-            sleep(7);
+            sleep(7);//先休眠再检测 保障录制进程的状态正确
             self::checkRecordProcess();
         }
     }
@@ -103,7 +100,7 @@ class App
             foreach (self::$recordProcessArr as $roomKey => &$process) {
                 if (is_resource($process)) {
                     $res = proc_get_status($process);
-                    if (isset($res['running'])&&!$res['running']) {
+                    if (isset($res['running']) && !$res['running']) {
                         Cache::rm($roomKey);
                         Console::log("录制进程ID({$res['pid']})已关闭:{$roomKey}");
                         proc_close($process);
@@ -117,10 +114,93 @@ class App
     // 过滤掉emoji表情
     private static function filterNick($str)
     {
-        $str=str_replace(' ','',$str);
+        $str = str_replace(' ', '', $str);
         $str = preg_replace_callback('/./u', function (array $match) {
             return strlen($match[0]) >= 4 ? '' : $match[0];
         }, $str);
         return $str;
+    }
+
+    public static function init()
+    {
+        date_default_timezone_set("PRC");
+        Error::register();
+
+        // 数据库配置信息设置（全局有效）
+        Db::setConfig([
+            // 数据库类型
+            'type' => 'sqlite',
+            // 主机地址
+            'dsn' => 'sqlite:live.db',
+            // 数据库编码默认采用utf8
+            'charset' => 'utf8',
+            // 数据库调试模式
+            'debug' => true,
+        ]);
+
+        Cache::init([
+            'type' => 'File',
+            'path' => './cache/',
+            'prefix' => '',
+            'expire' => 0,
+        ]);
+    }
+
+
+    public static function spiderHot($config)
+    {
+        while (1) {
+            Console::log("程序开始执行爬取热门直播。。。");
+            foreach ($config as $liveCode => $liveName) {
+                /**
+                 * @var $class  \Gsons\Live\HuyaLive;
+                 */
+                $ClassName = "\Gsons\Live\\{$liveCode}Live";
+                if (!class_exists($ClassName)) {
+                    Console::error("ERROR:cant not find class $ClassName");
+                    continue;
+                }
+                $class = new $ClassName();
+                try {
+                    $arrList = $class->getHotNumArr();
+                } catch (\Exception $e) {
+                    continue;
+                }
+                $res = Db::table('cn_live_room')->insertAll($arrList);
+                Console::log($res ? "新增{$liveName}{$res}条数据成功" : "新增{$liveName}数据失败");
+            }
+            Console::log("正在休眠5分钟。。。");
+            sleep(5 * 60);
+        }
+
+    }
+
+    /**
+     * 获取直播平台过去几个小时热度最高的主播
+     * @param $siteCode
+     * @param int $hour
+     * @param int $num
+     * @return array
+     */
+    public static function getHotConfig($siteCode,$hour=2,$num=10)
+    {
+        $time=time()-60*60*$hour;
+        $field='room_id,max(nick_name) AS nick_name,max(room_url) AS room_url,max(site_name) AS site_name,max(hot_num) AS max_hot_num,avg(hot_num) AS avg_hot_num';
+
+        try{
+            $subQuery=Db::table("cn_live_room")
+                ->field($field)
+                ->where(['site_code' => $siteCode])
+                ->where("record_time",'>',$time)
+                ->group('room_id')
+                ->buildSql();
+            $arr = Db::table("{$subQuery} tb")
+                ->order('avg_hot_num desc')
+                ->limit(0,$num)
+                ->select();
+            return array_column($arr,'nick_name','room_id');
+        }catch (\Exception $e){
+            return [];
+        }
     }
 }

@@ -1,16 +1,13 @@
 ﻿﻿<?php
 require_once "vendor/autoload.php";
 use Gsons\App;
-date_default_timezone_set("PRC");
-
- \Gsons\lib\Error::register();
 
 //需要监听的房间
 $config = [
     "HuYa" => [
         995713=>'CICI',
         249648=>"全素颜",
-        517518=>'222'
+        139236=>'瑶池',
     ],
     // "Egame"=>[
     //     619364874=>'菇七七'
@@ -58,5 +55,8 @@ $config = [
 ];
 
 $record_path = "./video";
+//初始化配置
+App::init();
+//开始监听录制
 App::run($config, true, true,$record_path);
 // App::run($config, true, true,$record_path);
