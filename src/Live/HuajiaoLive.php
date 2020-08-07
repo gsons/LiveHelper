@@ -40,20 +40,21 @@ class HuajiaoLive extends  Live
 
     }
 
-    function getDancingRoomId()
+    function getDancingRoom()
     {
         // TODO: Implement getDancingRoomId() method.
         return [];
     }
 
-    function getAvRoomId()
+    function getTvRoom()
     {
         // TODO: Implement getAvRoomId() method.
         return [];
     }
 
-    function getHotNumArr()
+    function getHotDanceRoom()
     {
+        return [];
         // TODO: Implement getHotNumArr() method.
     }
 

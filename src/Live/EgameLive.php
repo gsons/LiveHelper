@@ -23,7 +23,7 @@ class EGameLive extends Live
      * @throws \ErrorException
      * @return array
      */
-    private function getAvRoomIdList($arr=[],$page=1){
+    private function getTvRoomList($arr=[],$page=1){
         $curl = new HttpCurl();
         $curl->setReferrer('https://egame.qq.com/livelist?layoutid=2000000110&tagId=0&tagIdStr=');
         $param=[
@@ -48,7 +48,7 @@ class EGameLive extends Live
         if(isset($data['total'])){
             $pageNum=ceil($data['total']/40);
             if($page<$pageNum){
-                return $arr+$this->getAvRoomIdList($dataArr,$page+1);
+                return $arr+$this->getTvRoomList($dataArr,$page+1);
             }else{
                 return $dataArr;
             }
@@ -87,7 +87,7 @@ class EGameLive extends Live
     }
 
     //todo 企鹅电竞暂未正在跳舞的接口
-    public function getDancingRoomId()
+    public function getDancingRoom()
     {
         return [];
     }
@@ -95,12 +95,13 @@ class EGameLive extends Live
     /**
      * @throws \ErrorException
      */
-    public function getAvRoomId(){
-        return $this->getAvRoomIdList();
+    public function getTvRoom(){
+        return $this->getTvRoomList();
     }
 
-    function getHotNumArr()
+    function getHotDanceRoom()
     {
+        return [];
         // TODO: Implement getHotNumArr() method.
     }
 

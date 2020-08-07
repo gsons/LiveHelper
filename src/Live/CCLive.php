@@ -8,16 +8,17 @@
 
 
 namespace Gsons\Live;
+
 use Gsons\HttpCurl;
 
 
 class CCLive extends Live
 {
-    const SITE_NAME = "CC直播";
+    const SITE_NAME = "CC直播";const  SITE_CODE="CC";
     const BASE_ROOM_URL = "https://cc.163.com/%s";
     const BASE_LIVE_URL = "http://cgi.v.cc.163.com/video_play_url/%s";
     const DANCE_ROOM_API_URL = "http://cc.163.com/wdf/game_lives/?gametype=65005&tag_id=79&format=json&start=0&size=100";
-    const TV_ROOM_API_URL="https://cc.163.com/wdf/game_lives/?gametype=65004&tag_id=0&format=json&start=%s&size=%s&uid=0&sn=3a0ccca0-127b-4ca8-89fe-76c4d5382496&os=web";
+    const TV_ROOM_API_URL = "https://cc.163.com/wdf/game_lives/?gametype=65004&tag_id=0&format=json&start=%s&size=%s&uid=0&sn=3a0ccca0-127b-4ca8-89fe-76c4d5382496&os=web";
 
     /**
      * @param $roomId
@@ -43,10 +44,11 @@ class CCLive extends Live
     }
 
     /**
+     * @param $dancing bool
      * @return array
      * @throws \ErrorException
      */
-    public function getDancingRoomId()
+    public function getDancingRoom()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://cc.163.com');
@@ -75,22 +77,24 @@ class CCLive extends Live
      * @throws \ErrorException
      * @return array
      */
-    public function getAvRoomIdArr($page=1){
+    public function getTvRoomArr($page = 1)
+    {
         $curl = new HttpCurl();
         $curl->setReferrer('https://cc.163.com');
-        $row=10;$url=sprintf(self::TV_ROOM_API_URL,($page-1)*$row,$row);
+        $row = 10;
+        $url = sprintf(self::TV_ROOM_API_URL, ($page - 1) * $row, $row);
         $curl->get($url);
         $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }
         $data = json_decode($curl->response, true);
-        $dataArr=  isset($data['lives']) && !empty($data['lives'])?array_column($data['lives'], 'title', 'ccid'):[];
-        $pageNum=ceil($data['total']/$row);
-        if($page<$pageNum){
-            $temp=$dataArr+$this->getAvRoomIdArr($page+1);
+        $dataArr = isset($data['lives']) && !empty($data['lives']) ? array_column($data['lives'], 'title', 'ccid') : [];
+        $pageNum = ceil($data['total'] / $row);
+        if ($page < $pageNum) {
+            $temp = $dataArr + $this->getTvRoomArr($page + 1);
             return $temp;
-        }else{
+        } else {
             return $dataArr;
         }
 
@@ -101,13 +105,44 @@ class CCLive extends Live
      * @return array
      * @throws \ErrorException
      */
-    public function getAvRoomId(){
-        return $this->getAvRoomIdArr();
+    public function getTvRoom()
+    {
+        return $this->getTvRoomArr();
     }
 
-    function getHotNumArr()
+    /**
+     * @return array|mixed
+     * @throws \ErrorException
+     */
+    function getHotDanceRoom()
     {
-        // TODO: Implement getHotNumArr() method.
+        $curl = new HttpCurl();
+        $curl->setReferrer('https://cc.163.com');
+        $curl->get(self::DANCE_ROOM_API_URL);
+        $data = json_decode($curl->response, true);
+        $curl->close();
+        if ($curl->error) {
+            throw new \ErrorException($curl->error_message);
+        }
+        $arr = [];
+        if (isset($data['lives']) && !empty($data['lives'])) {
+            $list = $data['lives'];
+            foreach ($list as $vo) {
+                $time = time();
+                $arr[] = [
+                    'site_name' => self::SITE_NAME,
+                    'site_code' => self::SITE_CODE,
+                    'nick_name' => $vo['nickname'],
+                    'room_id' => $vo['ccid'],
+                    'room_url' => sprintf(self::BASE_ROOM_URL, $vo['ccid']),
+                    'record_date' => date('Y-m-d H:i:s', $time),
+                    'record_time' => $time,
+                    'hot_num' => $vo['hot_score']
+                ];
+            }
+        }
+        unset($data);
+        return $arr;
     }
 
 

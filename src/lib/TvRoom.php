@@ -62,7 +62,7 @@ class TvRoom
 
             $class = new $ClassName();
             try {
-                $roomIdArr = $class->getAvRoomId();
+                $roomIdArr = $class->getTvRoom();
             } catch (\ErrorException $e) {
                 Console::error("ERROR:获取{$liveName}直播房间号失败:".$e->getMessage());
                 continue;

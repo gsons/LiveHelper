@@ -12,14 +12,15 @@ use Gsons\HttpCurl;
 
 class DouYuLive extends Live
 {
-    const SITE_NAME = "斗鱼直播";const SITE_CODE="DouYu";
+    const SITE_NAME = "斗鱼直播";
+    const SITE_CODE = "DouYu";
     const BASE_ROOM_URL = "https://www.douyu.com/%s";
     //https://www.douyu.com/gapi/rkc/directory/3_1122/1
     const DANCE_ROOM_API_URL = "https://www.douyu.com/gapi/rkc/directory/2_1008/%s";
     const ENC_URL = "https://www.douyu.com/swf_api/homeH5Enc?rids=%s";
-    const GET_LIVE_URL="https://www.douyu.com/lapi/live/getH5Play/%s";
+    const GET_LIVE_URL = "https://www.douyu.com/lapi/live/getH5Play/%s";
 
-    const AV_ROOM_URL="https://www.douyu.com/gapi/rkc/directory/mixList/2_208/%s";
+    const AV_ROOM_URL = "https://www.douyu.com/gapi/rkc/directory/mixList/2_208/%s";
 
 
     /**
@@ -28,7 +29,8 @@ class DouYuLive extends Live
      * @throws \ErrorException
      * @return array
      */
-    private function getAvRoomIdList($arr=[],$page=1){
+    private function getTvRoomList($arr = [], $page = 1)
+    {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.douyu.com/g_yqk');
         $roomUrl = sprintf(self::AV_ROOM_URL, $page);
@@ -39,17 +41,17 @@ class DouYuLive extends Live
             throw new \ErrorException($curl->error_message);
         }
         $data = json_decode($curl->response, true);
-        $dataArr=$data['data']['rl'];
-        $dataArr=array_column($dataArr,'rn','rid');
-        if(isset($data['data']['pgcnt'])){
-            if($page<$data['data']['pgcnt']){
-                return $arr+$this->getAvRoomIdList($dataArr,$page+1);
-            }else{
+        $dataArr = $data['data']['rl'];
+        $dataArr = array_column($dataArr, 'rn', 'rid');
+        if (isset($data['data']['pgcnt'])) {
+            if ($page < $data['data']['pgcnt']) {
+                return $arr + $this->getTvRoomList($dataArr, $page + 1);
+            } else {
                 return $dataArr;
             }
 
-        }else{
-            return  [];
+        } else {
+            return [];
         }
     }
 
@@ -58,31 +60,32 @@ class DouYuLive extends Live
      * @return array
      * @throws \ErrorException
      */
-    public function getAvRoomId(){
-        return $this->getAvRoomIdList();
+    public function getTvRoom()
+    {
+        return $this->getTvRoomList();
     }
 
     /**
      * @throws \ErrorException
+     * @return array
      */
-    public function getDancingRoomId()
+    public function getDancingRoom()
     {
-       $arr1=self::getDancingRoomIdByPage(1);
-       // $arr2=self::getDancingRoomIdByPage(2);
-       // $arr3=self::getDancingRoomIdByPage(3);
-       // $arr=array_merge($arr1,$arr2,$arr3);
+        $arr1 = self::getDancingRoomByPage(1);
         return $arr1;
     }
 
     /**
+     * @param $dancing
      * @param $page
      * @return array
      * @throws \ErrorException
      */
-    private function getDancingRoomIdByPage($page){
+    private function getDancingRoomByPage($page)
+    {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.douyu.com/g_yz');
-        $curl->get(sprintf(self::DANCE_ROOM_API_URL,$page));
+        $curl->get(sprintf(self::DANCE_ROOM_API_URL, $page));
         $data = json_decode($curl->response, true);
         $curl->close();
         if ($curl->error) {
@@ -92,8 +95,9 @@ class DouYuLive extends Live
         if (isset($data['data']['rl']) && !empty($data['data']['rl'])) {
             $list = $data['data']['rl'];
             foreach ($list as $vo) {
+
                 if (isset($vo['icv1'][1][0]['id']) && $vo['icv1'][1][0]['id'] == '656' || isset($vo['icv1'][1][0]['id']) && $vo['icv1'][1][0]['id'] == '655') {
-                   $arr[] = ['roomId' => $vo['rid'], 'nickName' => $vo['nn']];
+                    $arr[] = ['roomId' => $vo['rid'], 'nickName' => $vo['nn']];
                 }
             }
             $arr = array_column($arr, 'nickName', 'roomId');
@@ -169,10 +173,10 @@ EOF;
             return {debugMessages};
         };
 EOF;
-        $did=self::getRandomName(10);
-        $tt=time();
-        $js_call ="var res=ub98484234({$roomId},'{$did}',{$tt});res=JSON.stringify(res);console.log(res);";
-        $js_md5 =file_get_contents("./js/crypto-js-md5.min.js");
+        $did = self::getRandomName(10);
+        $tt = time();
+        $js_call = "var res=ub98484234({$roomId},'{$did}',{$tt});res=JSON.stringify(res);console.log(res);";
+        $js_md5 = file_get_contents("./js/crypto-js-md5.min.js");
         $search = "eval({workflow});";
         $js_dom = self::replaceTpl($names_dict, $js_dom);
         $js_patch = self::replaceTpl($names_dict, $js_patch);
@@ -186,40 +190,40 @@ EOF;
         $data = json_decode($curl->response, true);
         $curl->close();
         if ($curl->error) {
-            throw new \ErrorException($apiUrl.'=>'.$curl->error_message);
+            throw new \ErrorException($apiUrl . '=>' . $curl->error_message);
         }
         if (isset($data['data']["room{$roomId}"])) {
             $js_enc = str_replace($search, $js_patch, $data['data']["room{$roomId}"]);
-            file_put_contents('js/temp.js', $js_md5.PHP_EOL.$js_dom . PHP_EOL . $js_enc . PHP_EOL . $js_debug . PHP_EOL . $js_call);
+            file_put_contents('js/temp.js', $js_md5 . PHP_EOL . $js_dom . PHP_EOL . $js_enc . PHP_EOL . $js_debug . PHP_EOL . $js_call);
             exec('node js/temp.js', $var);
-            $jsonStr=join('',$var);
-            $arr=json_decode($jsonStr,true);
-            $key=$names_dict['{resoult}'];
+            $jsonStr = join('', $var);
+            $arr = json_decode($jsonStr, true);
+            $key = $names_dict['{resoult}'];
 
-            if(isset($arr[$key])){
+            if (isset($arr[$key])) {
                 /**
                  * @var $v
                  * @var $sign
                  */
                 parse_str($arr[$key]);
-                $param=[
-                    'v'=>$v,
-                    'did'=>$did,
-                    'tt'=>$tt,
-                    'sign'=>$sign,
-                    'cdn'=>'',
-                    'iar'=>0,
-                    'ive'=>0
+                $param = [
+                    'v' => $v,
+                    'did' => $did,
+                    'tt' => $tt,
+                    'sign' => $sign,
+                    'cdn' => '',
+                    'iar' => 0,
+                    'ive' => 0
                 ];
-                $liveUrl=sprintf(self::GET_LIVE_URL,$roomId);
+                $liveUrl = sprintf(self::GET_LIVE_URL, $roomId);
                 $curl = new HttpCurl();
-                $res=$curl->post($liveUrl,$param);
+                $res = $curl->post($liveUrl, $param);
                 $curl->close();
                 if ($curl->error) {
-                    throw new \ErrorException($liveUrl.'=>'.$curl->error_message);
+                    throw new \ErrorException($liveUrl . '=>' . $curl->error_message);
                 }
-                $arr=json_decode($res->response,true);
-                return $arr['data']['rtmp_url'].'/'.$arr['data']['rtmp_live'];
+                $arr = json_decode($res->response, true);
+                return $arr['data']['rtmp_url'] . '/' . $arr['data']['rtmp_live'];
             }
         }
         throw new \ErrorException("API error");
@@ -229,11 +233,11 @@ EOF;
      * @return array|mixed
      * @throws \ErrorException
      */
-    function getHotNumArr()
+    function getHotDanceRoom()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.douyu.com/g_yz');
-        $curl->get(sprintf(self::DANCE_ROOM_API_URL,1));
+        $curl->get(sprintf(self::DANCE_ROOM_API_URL, 1));
         $data = json_decode($curl->response, true);
         $curl->close();
         if ($curl->error) {
@@ -242,15 +246,15 @@ EOF;
         $arr = [];
         if (isset($data['data']['rl']) && !empty($data['data']['rl'])) {
             $list = $data['data']['rl'];
-            foreach ($list as $vo){
-                $time=time();
-                $arr[]=[
+            foreach ($list as $vo) {
+                $time = time();
+                $arr[] = [
                     'site_name' => self::SITE_NAME,
                     'site_code' => self::SITE_CODE,
                     'nick_name' => $vo['nn'],
                     'room_id' => $vo['rid'],
-                    'room_url' => sprintf(self::BASE_ROOM_URL,$vo['rid']),
-                    'record_date' => date('Y-m-d H:i:s',$time),
+                    'room_url' => sprintf(self::BASE_ROOM_URL, $vo['rid']),
+                    'record_date' => date('Y-m-d H:i:s', $time),
                     'record_time' => $time,
                     'hot_num' => $vo['ol']
                 ];

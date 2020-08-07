@@ -12,17 +12,19 @@ use Gsons\HttpCurl;
 
 class HuYaLive extends Live
 {
-    const SITE_NAME = "虎牙直播";const SITE_CODE="HuYa";
+    const SITE_NAME = "虎牙直播";
+    const SITE_CODE = "HuYa";
     const BASE_ROOM_URL = "https://www.huya.com/%s";
     const BASE_LIVE_URL = "https://m.huya.com/%s";
     const DANCE_ROOM_API_URL = "https://www.huya.com/cache.php?m=LiveList&do=getTmpLiveByPage&gameId=1663&tmpId=116&page=1";
     const AV_ROOM_URL = "https://www.huya.com/cache.php?m=LiveList&do=getLiveListByPage&gameId=2135&tagAll=0&page=%s";
 
     /**
+     *
      * @return array
      * @throws \ErrorException
      */
-    public function getDancingRoomId()
+    public function getDancingRoom()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.huya.com/g/xingxiu');
@@ -125,7 +127,7 @@ class HuYaLive extends Live
      * @throws \ErrorException
      * @return array
      */
-    private function getAvRoomIdList($arr = [], $page = 1)
+    private function getTvRoomList($arr = [], $page = 1)
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://m.huya.com');
@@ -141,7 +143,7 @@ class HuYaLive extends Live
         $dataArr = array_column($dataArr, 'introduction', 'profileRoom');
         if (isset($data['data']['totalPage'])) {
             if ($page < $data['data']['totalPage']) {
-                return $arr + $this->getAvRoomIdList($dataArr, $page + 1);
+                return $arr + $this->getTvRoomList($dataArr, $page + 1);
             } else {
                 return $dataArr;
             }
@@ -155,15 +157,15 @@ class HuYaLive extends Live
      * @throws \ErrorException
      * @return array
      */
-    public function getAvRoomId()
+    public function getTvRoom()
     {
-        return $this->getAvRoomIdList();
+        return $this->getTvRoomList();
     }
 
     /**
      * @throws \ErrorException
      */
-    public function getHotNumArr()
+    public function getHotDanceRoom()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.huya.com/g/xingxiu');
@@ -176,15 +178,15 @@ class HuYaLive extends Live
         $arr = [];
         if (isset($data['data']['datas']) && !empty($data['data']['datas'])) {
             $list = $data['data']['datas'];
-            foreach ($list as $vo){
-                $time=time();
-                $arr[]=[
+            foreach ($list as $vo) {
+                $time = time();
+                $arr[] = [
                     'site_name' => self::SITE_NAME,
                     'site_code' => self::SITE_CODE,
                     'nick_name' => $vo['nick'],
                     'room_id' => $vo['profileRoom'],
-                    'room_url' => sprintf(self::BASE_ROOM_URL,$vo['profileRoom']),
-                    'record_date' => date('Y-m-d H:i:s',$time),
+                    'room_url' => sprintf(self::BASE_ROOM_URL, $vo['profileRoom']),
+                    'record_date' => date('Y-m-d H:i:s', $time),
                     'record_time' => $time,
                     'hot_num' => $vo['totalCount']
                 ];

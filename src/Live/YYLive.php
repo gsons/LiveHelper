@@ -12,7 +12,7 @@ use Gsons\HttpCurl;
 
 class YYLive extends Live
 {
-    const SITE_NAME = "YY直播";
+    const SITE_NAME = "YY直播";const SITE_CODE="YY";
     const BASE_ROOM_URL = "https://www.yy.com/%s";
     const BASE_LIVE_URL = "https://interface.yy.com/hls/new/get/%s/%s/2000?source=wapyy&callback=jsonp2";
     const DANCE_ROOM_API_URL = "http://data.3g.yy.com/mobyy/nav/dance/idx";
@@ -49,7 +49,7 @@ class YYLive extends Live
      * @return array
      * @throws \ErrorException
      */
-    public function getDancingRoomId()
+    public function getDancingRoom()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('http://www.yy.com/');
@@ -63,9 +63,11 @@ class YYLive extends Live
         if (isset($data['data'][1]['data']) && !empty($data['data'][1]['data'])) {
             $list = $data['data'][1]['data'];
             foreach ($list as $vo) {
+
                 if (isset($vo['tag']) && $vo['tag'] == '正在热舞') {
                     $arr[] = ['roomId' => $vo['sid'], 'nickName' => $vo['name']];
                 }
+
             }
             $arr = array_column($arr, 'nickName', 'roomId');
         }
@@ -77,7 +79,7 @@ class YYLive extends Live
      * @return array
      * @throws \ErrorException
      */
-    public function getAvRoomId()
+    public function getTvRoom()
     {
         $curl = new HttpCurl();
         $curl->setReferrer('https://www.yy.com/others/yqk');
@@ -89,8 +91,39 @@ class YYLive extends Live
         $data = json_decode($curl->response, true);
         return isset($data['data']['data']) ? array_column($data['data']['data'], 'desc', 'sid') : [];
     }
-    function getHotNumArr()
+
+    /**
+     * @return array|mixed
+     * @throws \ErrorException
+     */
+    public  function getHotDanceRoom()
     {
-        // TODO: Implement getHotNumArr() method.
+        $curl = new HttpCurl();
+        $curl->setReferrer('http://www.yy.com/');
+        $curl->get(self::DANCE_ROOM_API_URL);
+        $data = json_decode($curl->response, true);
+        $curl->close();
+        if ($curl->error) {
+            throw new \ErrorException($curl->error_message);
+        }
+        $arr = [];
+        if (isset($data['data'][0]['data']) && !empty($data['data'][0]['data'])) {
+            $list = $data['data'][0]['data'];
+            foreach ($list as $vo) {
+                $time = time();
+                $arr[] = [
+                    'site_name' => self::SITE_NAME,
+                    'site_code' => self::SITE_CODE,
+                    'nick_name' => $vo['name'],
+                    'room_id' => $vo['sid'],
+                    'room_url' => sprintf(self::BASE_ROOM_URL, $vo['sid']),
+                    'record_date' => date('Y-m-d H:i:s', $time),
+                    'record_time' => $time,
+                    'hot_num' => $vo['users']
+                ];
+            }
+        }
+        unset($data);
+        return $arr;
     }
 }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gsonhub
- * Date: 2019/7/7
- * Time: 3:49
- */
 
 namespace Gsons;
 
@@ -16,11 +10,14 @@ use think\Db;
 class App
 {
     static $recordProcessArr = [];
+    static $lastSpiderTime=0;
+    const HOT_NUM_LIMIT=140000;
+    const CAPTURE_TIME=3*24*60*60;
 
     public static function run($config, $record = false, $isGBK = false, $record_path = "./video")
     {
 
-        Cache::clear();
+//        Cache::clear();
         Console::logEOL();
 
         printf("\007");
@@ -28,7 +25,7 @@ class App
 
         while (1) {
             foreach ($config as $liveName => $roomIdArr) {
-                $roomIdArr=$roomIdArr+self::getHotConfig($liveName,2*24*24,10);
+                //$roomIdArr=$roomIdArr+self::getHotConfig($liveName,2*24*24,10);
                 /**
                  * @var $class \Gsons\Live\HuyaLive;
                  */
@@ -39,7 +36,7 @@ class App
                 }
                 $class = new $ClassName();
                 try {
-                    $arr = $class->getDancingRoomId();
+                    $arr = $class->getDancingRoom();
                 } catch (\ErrorException $e) {
                     Console::error($e);
                     continue;
@@ -88,11 +85,19 @@ class App
                 unset($arr);
                 unset($class);
             }
-            Console::logEOL();
-            sleep(7);//先休眠再检测 保障录制进程的状态正确
+            $t_start=time();$exec_time=0;
+            if($t_start-self::$lastSpiderTime>5*60){
+                $hot_config = ['HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播','CC' => 'CC直播', 'YY' => 'YY直播', ];
+                self::spiderHot($hot_config,$isGBK,$record_path);
+                $t_end=time();
+                self::$lastSpiderTime=time();
+                $exec_time=$t_end-$t_start;
+            }
+            if($exec_time<7) sleep(7-$exec_time);//先休眠再检测 保障录制进程的状态正确
             self::checkRecordProcess();
         }
     }
+
 
     public static function checkRecordProcess()
     {
@@ -124,7 +129,7 @@ class App
     public static function init()
     {
         date_default_timezone_set("PRC");
-        Error::register();
+        //Error::register();
 
         // 数据库配置信息设置（全局有效）
         Db::setConfig([
@@ -147,32 +152,59 @@ class App
     }
 
 
-    public static function spiderHot($config)
+    public static function spiderHot($config, $isGBK = false, $record_path = "./video")
     {
-        while (1) {
-            Console::log("程序开始执行爬取热门直播。。。");
-            foreach ($config as $liveCode => $liveName) {
-                /**
-                 * @var $class  \Gsons\Live\HuyaLive;
-                 */
-                $ClassName = "\Gsons\Live\\{$liveCode}Live";
-                if (!class_exists($ClassName)) {
-                    Console::error("ERROR:cant not find class $ClassName");
-                    continue;
-                }
-                $class = new $ClassName();
-                try {
-                    $arrList = $class->getHotNumArr();
-                } catch (\Exception $e) {
-                    continue;
-                }
-                $res = Db::table('cn_live_room')->insertAll($arrList);
-                Console::log($res ? "新增{$liveName}{$res}条数据成功" : "新增{$liveName}数据失败");
+        Console::logEOL();
+        Console::log("程序开始执行爬取热门直播。。。");
+        foreach ($config as $liveCode => $liveName) {
+            /**
+             * @var $class  \Gsons\Live\HuyaLive;
+             */
+            $ClassName = "\Gsons\Live\\{$liveCode}Live";
+            if (!class_exists($ClassName)) {
+                Console::error("ERROR:cant not find class $ClassName");
+                continue;
             }
-            Console::log("正在休眠5分钟。。。");
-            sleep(5 * 60);
-        }
+            $class = new $ClassName();
+            try {
+                $arrList = $class->getHotDanceRoom();
+            } catch (\Exception $e) {
+                continue;
+            }
+            foreach ($arrList as $vo) {
+                $roomId = $vo['room_id'];
+                $nick = $vo['nick_name'];
+                $room=Db::table('cn_live_room')
+                    ->where(['site_code'=>$vo['site_code'],'room_id'=>$vo['room_id']])
+                    ->order('record_date desc')
+                    ->find();
+                $record_date=isset($room['record_date'])?strtotime($room['record_date']):0;
+                if ((time()-$record_date)>self::CAPTURE_TIME&&$vo['hot_num']>self::HOT_NUM_LIMIT) {
+                    try {
+                        /**
+                         * @var $class \Gsons\Live\HuyaLive;
+                         */
+                        $liveUrl = $class->getLiveUrl($roomId);
+                        $siteName = $class::SITE_NAME;
+                        //防止昵称出现特殊字符导致ffmpeg无法识别文件路径
+                        $nick = self::filterNick($nick);
+                        $fileName = "{$siteName}-{$nick}-{$roomId}_" . date('YmdHis') . '.png';
+                        $path = "{$record_path}/{$siteName}/快照/";
+                        Console::log("获取 {$siteName}-{$nick} 关键帧");
+                        $process = Live::capture($liveUrl, $path, $fileName, $isGBK);
+                        $res = proc_get_status($process);
+                        Console::log("截图进程ID({$res['pid']})已开启:{$siteName}-{$nick}-$roomId");
+                    } catch (\ErrorException $e) {
+                        Console::error($e);
+                    }
+                }
+            }
+            $res = Db::table('cn_live_room')->insertAll($arrList);
+            Console::log($res ? "新增{$liveName}{$res}条数据成功" : "新增{$liveName}数据失败");
 
+        }
+        Console::log("程序结束执行爬取热门直播。。。");
+        Console::logEOL();
     }
 
     /**
@@ -182,24 +214,24 @@ class App
      * @param int $num
      * @return array
      */
-    public static function getHotConfig($siteCode,$hour=2,$num=10)
+    public static function getHotConfig($siteCode, $hour = 2, $num = 10)
     {
-        $time=time()-60*60*$hour;
-        $field='room_id,max(nick_name) AS nick_name,max(room_url) AS room_url,max(site_name) AS site_name,max(hot_num) AS max_hot_num,avg(hot_num) AS avg_hot_num';
+        $time = time() - 60 * 60 * $hour;
+        $field = 'room_id,max(nick_name) AS nick_name,max(room_url) AS room_url,max(site_name) AS site_name,max(hot_num) AS max_hot_num,avg(hot_num) AS avg_hot_num';
 
-        try{
-            $subQuery=Db::table("cn_live_room")
+        try {
+            $subQuery = Db::table("cn_live_room")
                 ->field($field)
                 ->where(['site_code' => $siteCode])
-                ->where("record_time",'>',$time)
+                ->where("record_time", '>', $time)
                 ->group('room_id')
                 ->buildSql();
             $arr = Db::table("{$subQuery} tb")
                 ->order('avg_hot_num desc')
-                ->limit(0,$num)
+                ->limit(0, $num)
                 ->select();
-            return array_column($arr,'nick_name','room_id');
-        }catch (\Exception $e){
+            return array_column($arr, 'nick_name', 'room_id');
+        } catch (\Exception $e) {
             return [];
         }
     }

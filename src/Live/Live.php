@@ -18,21 +18,23 @@ abstract class Live
     abstract function getLiveUrl($roomId);
 
     /**
-     * 获取
+     * 获取正在跳舞房间号
      * @return array
      */
-    abstract function getDancingRoomId();
+    abstract function getDancingRoom();
 
     /**
+     * 获取一起看直播间
      * @return array
      */
-    abstract function getAvRoomId();
+    abstract function getTvRoom();
 
     /**
      * 统计热门跳舞直播间
      * @return mixed
      */
-    abstract function getHotNumArr();
+    abstract function getHotDanceRoom();
+
 
     /**
      * 录制直播视频
@@ -55,6 +57,29 @@ abstract class Live
         $file = "{$path}/{$fileName}";
         $cmd = "ffmpeg -i \"{$liveUrl}\" -t {$time} -c:v copy -c:a copy {$file} -loglevel quiet";
         // $cmd='start "" cmd /k "chcp 65001 & ffmpeg -i "'.$liveUrl.'" -t '.$time.' -c:v copy -c:a copy  "'.$file.'" "';
+        $process = proc_open($cmd, [['pipe', 'r']], $pipes);
+        return $process;
+    }
+
+    /**
+     * 获取直播源的一帧图片
+     * @param $liveUrl
+     * @param $path
+     * @param $fileName
+     * @param bool $isGBK
+     * @return bool|resource
+     */
+    public static function capture($liveUrl, $path, $fileName, $isGBK = true)
+    {
+        if ($isGBK) {
+            $path = iconv('utf-8', 'gbk', $path);
+            $fileName = iconv('utf-8', 'gbk', $fileName);
+        }
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+        $file = "{$path}/{$fileName}";
+        $cmd = "ffmpeg -i  \"{$liveUrl}\"  -f image2 {$file}  -loglevel quiet";
         $process = proc_open($cmd, [['pipe', 'r']], $pipes);
         return $process;
     }
