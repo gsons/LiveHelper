@@ -9,10 +9,28 @@ use think\Db;
 
 class App
 {
+    //记录所有录制进程
     static $recordProcessArr = [];
-    static $lastSpiderTime=0;
-    const HOT_NUM_LIMIT=140000;
-    const CAPTURE_TIME=3*24*60*60;
+
+    //上次爬虫时间
+    static $lastSpiderTime = 0;
+
+    //默认截图最低热度
+    const HOT_NUM_LIMIT = 140000;
+
+    //截图周期 三天一次
+    const CAPTURE_TIME = 3 * 24 * 60 * 60;
+
+    //截图最低热度
+    static $hot_num_limit_arr = [
+        'HuYa' => 140000,
+        'DouYu' => 100000,
+        'CC' => 100000,
+        'YY' => 2000,
+        'Huajiao' => 5000,
+        'Egame' => 10000,
+        'Inke'=>50000
+    ];
 
     public static function run($config, $record = false, $isGBK = false, $record_path = "./video")
     {
@@ -85,15 +103,17 @@ class App
                 unset($arr);
                 unset($class);
             }
-            $t_start=time();$exec_time=0;
-            if($t_start-self::$lastSpiderTime>5*60){
-                $hot_config = ['HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播','CC' => 'CC直播', 'YY' => 'YY直播', ];
-                self::spiderHot($hot_config,$isGBK,$record_path);
-                $t_end=time();
-                self::$lastSpiderTime=time();
-                $exec_time=$t_end-$t_start;
+            $t_start = time();
+            $exec_time = 0;
+            if ($t_start - self::$lastSpiderTime > 30 * 60) {
+                $hot_config = ['Huajiao' => '花椒直播','HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'CC' => 'CC直播', 'YY' => 'YY直播', 'Egame' => '企鹅电竞', 'Inke'=>'映客直播'];
+                self::spiderHot($hot_config, $isGBK, $record_path);
+                $t_end = time();
+                self::$lastSpiderTime = time();
+                $exec_time = $t_end - $t_start;
             }
-            if($exec_time<7) sleep(7-$exec_time);//先休眠再检测 保障录制进程的状态正确
+            Console::logEOL();
+            if ($exec_time < 7) sleep(7 - $exec_time);//先休眠再检测 保障录制进程的状态正确
             self::checkRecordProcess();
         }
     }
@@ -174,12 +194,17 @@ class App
             foreach ($arrList as $vo) {
                 $roomId = $vo['room_id'];
                 $nick = $vo['nick_name'];
-                $room=Db::table('cn_live_room')
-                    ->where(['site_code'=>$vo['site_code'],'room_id'=>$vo['room_id']])
-                    ->order('record_date desc')
-                    ->find();
-                $record_date=isset($room['record_date'])?strtotime($room['record_date']):0;
-                if ((time()-$record_date)>self::CAPTURE_TIME&&$vo['hot_num']>self::HOT_NUM_LIMIT) {
+                try {
+                    $room = Db::table('cn_live_room')
+                        ->where(['site_code' => $vo['site_code'], 'room_id' => $vo['room_id']])
+                        ->order('record_date desc')
+                        ->find();
+                } catch (\Exception $e) {
+                    Console::error($e);
+                }
+                $record_date = isset($room['record_date']) ? strtotime($room['record_date']) : 0;
+                $hot_num_limit = isset(self::$hot_num_limit_arr[$liveCode]) ? self::$hot_num_limit_arr[$liveCode] : self::HOT_NUM_LIMIT;
+                if ((time() - $record_date) > self::CAPTURE_TIME && $vo['hot_num'] > $hot_num_limit) {
                     try {
                         /**
                          * @var $class \Gsons\Live\HuyaLive;
@@ -190,7 +215,7 @@ class App
                         $nick = self::filterNick($nick);
                         $fileName = "{$siteName}-{$nick}-{$roomId}_" . date('YmdHis') . '.png';
                         $path = "{$record_path}/{$siteName}/快照/";
-                        Console::log("获取 {$siteName}-{$nick} 关键帧");
+                        Console::log("获取 {$siteName}-{$nick} 关键帧: ".$liveUrl);
                         $process = Live::capture($liveUrl, $path, $fileName, $isGBK);
                         $res = proc_get_status($process);
                         Console::log("截图进程ID({$res['pid']})已开启:{$siteName}-{$nick}-$roomId");
@@ -199,8 +224,15 @@ class App
                     }
                 }
             }
-            $res = Db::table('cn_live_room')->insertAll($arrList);
-            Console::log($res ? "新增{$liveName}{$res}条数据成功" : "新增{$liveName}数据失败");
+
+
+            try {
+                $res_add = Db::table('cn_live_room')->insertAll($arrList);
+            } catch (\Exception $e) {
+                $res_add = false;
+                Console::error($e);
+            }
+            Console::log($res_add ? "新增{$liveName}{$res_add}条数据成功" : "新增{$liveName}数据失败");
 
         }
         Console::log("程序结束执行爬取热门直播。。。");

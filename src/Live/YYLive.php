@@ -110,6 +110,7 @@ class YYLive extends Live
         if (isset($data['data'][0]['data']) && !empty($data['data'][0]['data'])) {
             $list = $data['data'][0]['data'];
             foreach ($list as $vo) {
+                if(!isset($vo['sid'])||!$vo['sid']) continue;
                 $time = time();
                 $arr[] = [
                     'site_name' => self::SITE_NAME,

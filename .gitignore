@@ -6,3 +6,4 @@ cache
 log.txt
 room.txt
 *.log
+live.db

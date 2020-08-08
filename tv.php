@@ -10,9 +10,12 @@ require_once "vendor/autoload.php";
 
 use think\Cache;
 use Gsons\lib\TvRoom;
-
 \Gsons\App::init();
-
+$ob=new \Gsons\Live\InkeLive();
+$arrList=$ob->getHotDanceRoom();
+print_r(($arrList));exit;
+$res_add = \think\Db::table('cn_live_room')->insertAll($arrList);
+var_dump($res_add);exit;
 $config = ['CC' => 'CC直播', 'YY' => 'YY直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'Egame' => '企鹅电竞'];
 
 $temp = Cache::get('TV_LIVE_URL');

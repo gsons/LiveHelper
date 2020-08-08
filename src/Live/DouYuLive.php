@@ -223,7 +223,9 @@ EOF;
                     throw new \ErrorException($liveUrl . '=>' . $curl->error_message);
                 }
                 $arr = json_decode($res->response, true);
-                return $arr['data']['rtmp_url'] . '/' . $arr['data']['rtmp_live'];
+                if(isset($arr['data']['rtmp_url'])&&isset($arr['data']['rtmp_live'])){
+                    return $arr['data']['rtmp_url'] . '/' . $arr['data']['rtmp_live'];
+                }
             }
         }
         throw new \ErrorException("API error");
