@@ -1,5 +1,6 @@
 .idea
 video
+js/temp.js
 vendor
 cache
 log.txt
