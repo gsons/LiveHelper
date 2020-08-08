@@ -12,8 +12,8 @@ use think\Cache;
 use Gsons\lib\TvRoom;
 \Gsons\App::init();
 
-$config = ['CC' => 'CC直播', 'YY' => 'YY直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'Egame' => '企鹅电竞'];
 
+$config = ['CC' => 'CC直播', 'YY' => 'YY直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'Egame' => '企鹅电竞'];
 $temp = Cache::get('TV_LIVE_URL');
 if ($temp) {
     $listArr = $temp;
@@ -21,7 +21,6 @@ if ($temp) {
     $listArr = TvRoom::getLiveArr($config);
     Cache::set('TV_LIVE_URL', $listArr);
 }
-
 try {
     $res = TvRoom::sendLiveUrl($listArr);
 } catch (\ErrorException $e) {
