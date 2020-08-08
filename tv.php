@@ -28,4 +28,5 @@ try {
     echo $e->getMessage() . PHP_EOL;
     $res = false;
 }
+
 echo $res ? '发送成功' : '发送失败';
