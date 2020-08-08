@@ -29,7 +29,7 @@ class App
         'YY' => 2000,
         'Huajiao' => 5000,
         'Egame' => 10000,
-        'Inke'=>50000
+        'Inke' => 50000
     ];
 
     public static function run($config, $record = false, $isGBK = false, $record_path = "./video")
@@ -56,7 +56,7 @@ class App
                 try {
                     $arr = $class->getDancingRoom();
                 } catch (\ErrorException $e) {
-                    Console::error($e);
+                    Console::error($e->getMessage());
                     continue;
                 }
                 $siteName = $class::SITE_NAME;
@@ -96,7 +96,7 @@ class App
                             $res = proc_get_status($process);
                             Console::log("录制进程ID({$res['pid']})已开启:{$room_key}");
                         } catch (\ErrorException $e) {
-                            Console::error($e);
+                            Console::error($e->getMessage());
                         }
                     }
                 }
@@ -106,7 +106,7 @@ class App
             $t_start = time();
             $exec_time = 0;
             if ($t_start - self::$lastSpiderTime > 30 * 60) {
-                $hot_config = ['Huajiao' => '花椒直播','HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'CC' => 'CC直播', 'YY' => 'YY直播', 'Egame' => '企鹅电竞', 'Inke'=>'映客直播'];
+                $hot_config = ['Huajiao' => '花椒直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'CC' => 'CC直播', 'YY' => 'YY直播', 'Egame' => '企鹅电竞', 'Inke' => '映客直播'];
                 self::spiderHot($hot_config, $isGBK, $record_path);
                 $t_end = time();
                 self::$lastSpiderTime = time();
@@ -200,7 +200,7 @@ class App
                         ->order('record_date desc')
                         ->find();
                 } catch (\Exception $e) {
-                    Console::error($e);
+                    Console::error($e->getMessage());
                 }
                 $record_date = isset($room['record_date']) ? strtotime($room['record_date']) : 0;
                 $hot_num_limit = isset(self::$hot_num_limit_arr[$liveCode]) ? self::$hot_num_limit_arr[$liveCode] : self::HOT_NUM_LIMIT;
@@ -215,12 +215,12 @@ class App
                         $nick = self::filterNick($nick);
                         $fileName = "{$siteName}-{$nick}-{$roomId}_" . date('YmdHis') . '.png';
                         $path = "{$record_path}/{$siteName}/快照/";
-                        Console::log("获取 {$siteName}-{$nick} 关键帧: ".$liveUrl);
+                        Console::log("获取 {$siteName}-{$nick} 关键帧: " . $liveUrl);
                         $process = Live::capture($liveUrl, $path, $fileName, $isGBK);
                         $res = proc_get_status($process);
                         Console::log("截图进程ID({$res['pid']})已开启:{$siteName}-{$nick}-$roomId");
                     } catch (\ErrorException $e) {
-                        Console::error($e);
+                        Console::error($e->getMessage());
                     }
                 }
             }
@@ -230,7 +230,7 @@ class App
                 $res_add = Db::table('cn_live_room')->insertAll($arrList);
             } catch (\Exception $e) {
                 $res_add = false;
-                Console::error($e);
+                Console::error($e->getMessage());
             }
             Console::log($res_add ? "新增{$liveName}{$res_add}条数据成功" : "新增{$liveName}数据失败");
 
@@ -264,6 +264,7 @@ class App
                 ->select();
             return array_column($arr, 'nick_name', 'room_id');
         } catch (\Exception $e) {
+            Console::error($e->getMessage());
             return [];
         }
     }
