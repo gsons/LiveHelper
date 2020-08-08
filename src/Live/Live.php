@@ -82,7 +82,7 @@ abstract class Live
         }
         $file = "{$path}/{$fileName}";
         $cmd = "ffmpeg -i  \"{$liveUrl}\"  -f image2 {$file}  -loglevel quiet";
-        Console::log('capture cmd: '.$cmd);
+//        Console::log('capture cmd: '.$cmd);
         $process = proc_open($cmd, [['pipe', 'r']], $pipes);
         return $process;
     }
