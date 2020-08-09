@@ -19,7 +19,7 @@ class App
     const HOT_NUM_LIMIT = 140000;
 
     //截图周期 三天一次
-    const CAPTURE_TIME = 3 * 24 * 60 * 60;
+    const CAPTURE_TIME = 30 * 24 * 60 * 60;
 
     //截图最低热度
     static $hot_num_limit_arr = [
@@ -56,7 +56,7 @@ class App
                 try {
                     $arr = $class->getDancingRoom();
                 } catch (\ErrorException $e) {
-                    Console::error($e->getMessage());
+                    Console::error($e);
                     continue;
                 }
                 $siteName = $class::SITE_NAME;
@@ -95,7 +95,7 @@ class App
                             $res = proc_get_status($process);
                             Console::log("录制进程ID({$res['pid']})已开启:{$room_key}");
                         } catch (\ErrorException $e) {
-                            Console::error($e->getMessage());
+                            Console::error($e);
                         }
                     }
                 }
@@ -199,7 +199,7 @@ class App
                         ->order('record_date desc')
                         ->find();
                 } catch (\Exception $e) {
-                    Console::error($e->getMessage());
+                    Console::error($e);
                 }
                 $record_date = isset($room['record_date']) ? strtotime($room['record_date']) : 0;
                 $hot_num_limit = isset(self::$hot_num_limit_arr[$liveCode]) ? self::$hot_num_limit_arr[$liveCode] : self::HOT_NUM_LIMIT;
@@ -219,7 +219,7 @@ class App
                         $res = proc_get_status($process);
                         Console::log("截图进程ID({$res['pid']})已开启:{$siteName}-{$nick}-$roomId");
                     } catch (\ErrorException $e) {
-                        Console::error($e->getMessage());
+                        Console::error($e);
                     }
                 }
             }
@@ -229,7 +229,7 @@ class App
                 $res_add = Db::table('cn_live_room')->insertAll($arrList);
             } catch (\Exception $e) {
                 $res_add = false;
-                Console::error($e->getMessage());
+                Console::error($e);
             }
             Console::log($res_add ? "新增{$liveName}{$res_add}条数据成功" : "新增{$liveName}数据失败");
 
@@ -263,7 +263,7 @@ class App
                 ->select();
             return array_column($arr, 'nick_name', 'room_id');
         } catch (\Exception $e) {
-            Console::error($e->getMessage());
+            Console::error($e);
             return [];
         }
     }
