@@ -8,9 +8,10 @@
 
 require_once "vendor/autoload.php";
 
+
+
 use think\Cache;
 use Gsons\lib\TvRoom;
-\Gsons\App::init();
 
 
 $config = ['CC' => 'CC直播', 'YY' => 'YY直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'Egame' => '企鹅电竞'];
@@ -23,7 +24,7 @@ if ($temp) {
 }
 try {
     $res = TvRoom::sendLiveUrl($listArr);
-} catch (\ErrorException $e) {
+} catch (\Exception $e) {
     echo $e->getMessage() . PHP_EOL;
     $res = false;
 }

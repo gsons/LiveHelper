@@ -13,8 +13,9 @@ use Gsons\HttpCurl;
 
 class HuajiaoLive extends Live
 {
-    const SITE_NAME="花椒直播";const  SITE_CODE="Huajiao";
-    const BASE_ROOM_URL="https://www.huajiao.com/l/%s";
+    const SITE_NAME = "花椒直播";
+    const  SITE_CODE = "Huajiao";
+    const BASE_ROOM_URL = "https://www.huajiao.com/l/%s";
     const API_LIVE_URL = "https://h.huajiao.com/api/getFeedInfo?_rate=xd&stype=m3u8&sid=1596505786539.0925&liveid=%s&_=1596505786543&callback=Zepto1596505786534";
     const DANCE_ROOM_URL = "https://webh.huajiao.com/live/listcategory";
 
@@ -61,8 +62,8 @@ class HuajiaoLive extends Live
      */
     function getHotDanceRoom()
     {
-        $live_list=$this->getDanceRoomArr();
-        $list=[];
+        $live_list = $this->getDanceRoomArr();
+        $list = [];
         foreach ($live_list as $vo) {
             $time = time();
             $list[] = [
@@ -70,7 +71,7 @@ class HuajiaoLive extends Live
                 'site_code' => self::SITE_CODE,
                 'nick_name' => $vo['author']['nickname'],
                 'room_id' => $vo['feed']['relateid'],
-                'room_url' => sprintf(self::BASE_ROOM_URL,  $vo['feed']['relateid']),
+                'room_url' => sprintf(self::BASE_ROOM_URL, $vo['feed']['relateid']),
                 'record_date' => date('Y-m-d H:i:s', $time),
                 'record_time' => $time,
                 'hot_num' => $vo['feed']['watches']
@@ -81,13 +82,13 @@ class HuajiaoLive extends Live
 
     /**
      * @param $page
-     * @throws \ErrorException
      * @return array
+     * @throws \ErrorException
      */
-    private function getDanceRoomArr($page=1)
+    private function getDanceRoomArr($page = 1)
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.huajiao.com/category/801');
+        $curl->setReferer('https://www.huajiao.com/category/801');
         $param = [
             'cateid' => 801,
             'offset' => ($page - 1) * 99,
@@ -102,8 +103,8 @@ class HuajiaoLive extends Live
         }
         $data = json_decode($curl->response, true);
         $data = $data['data'];
-        if ($data['more'] == 1&&$page<2) {
-            return array_merge($data['feeds'] ,$this->getDanceRoomArr($page + 1));
+        if ($data['more'] == 1 && $page < 2) {
+            return array_merge($data['feeds'], $this->getDanceRoomArr($page + 1));
         } else {
             return $data['feeds'];
         }

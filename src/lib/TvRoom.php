@@ -19,7 +19,6 @@ class TvRoom
     /**
      * @param $arrList
      * @return bool
-     * @throws \ErrorException
      */
     public static function sendLiveUrl($arrList)
     {

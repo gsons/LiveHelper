@@ -26,13 +26,13 @@ class DouYuLive extends Live
     /**
      * @param array $arr
      * @param int $page
-     * @throws \ErrorException
      * @return array
+     * @throws \ErrorException
      */
     private function getTvRoomList($arr = [], $page = 1)
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.douyu.com/g_yqk');
+        $curl->setReferer('https://www.douyu.com/g_yqk');
         $roomUrl = sprintf(self::AV_ROOM_URL, $page);
         $curl->setOpt(CURLOPT_TIMEOUT, 10);
         $curl->get($roomUrl);
@@ -66,17 +66,15 @@ class DouYuLive extends Live
     }
 
     /**
-     * @throws \ErrorException
      * @return array
+     * @throws \ErrorException
      */
     public function getDancingRoom()
     {
-        $arr1 = self::getDancingRoomByPage(1);
-        return $arr1;
+        return self::getDancingRoomByPage(1);
     }
 
     /**
-     * @param $dancing
      * @param $page
      * @return array
      * @throws \ErrorException
@@ -84,7 +82,7 @@ class DouYuLive extends Live
     private function getDancingRoomByPage($page)
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.douyu.com/g_yz');
+        $curl->setReferer('https://www.douyu.com/g_yz');
         $curl->get(sprintf(self::DANCE_ROOM_API_URL, $page));
         $data = json_decode($curl->response, true);
         $curl->close();
@@ -110,8 +108,7 @@ class DouYuLive extends Live
     {
         $chars = 'abcdefghijklmnopqrstuvwxyz';
         $chars = str_shuffle($chars);
-        $str = substr($chars, 0, $len);
-        return $str;
+        return substr($chars, 0, $len);
     }
 
 
@@ -123,8 +120,8 @@ class DouYuLive extends Live
 
     /**
      * @param $roomId
-     * @throws \ErrorException
      * @return string
+     * @throws \ErrorException
      */
     public function getLiveUrl($roomId)
     {
@@ -184,7 +181,7 @@ EOF;
         $search = self::replaceTpl($names_dict, $search);
 
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.douyu.com');
+        $curl->setReferer('https://www.douyu.com');
         $apiUrl = sprintf(self::ENC_URL, $roomId);
         $curl->get($apiUrl);
         $data = json_decode($curl->response, true);
@@ -223,7 +220,7 @@ EOF;
                     throw new \ErrorException($liveUrl . '=>' . $curl->error_message);
                 }
                 $arr = json_decode($res->response, true);
-                if(isset($arr['data']['rtmp_url'])&&isset($arr['data']['rtmp_live'])){
+                if (isset($arr['data']['rtmp_url']) && isset($arr['data']['rtmp_live'])) {
                     return $arr['data']['rtmp_url'] . '/' . $arr['data']['rtmp_live'];
                 }
             }
@@ -238,7 +235,7 @@ EOF;
     function getHotDanceRoom()
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.douyu.com/g_yz');
+        $curl->setReferer('https://www.douyu.com/g_yz');
         $curl->get(sprintf(self::DANCE_ROOM_API_URL, 1));
         $data = json_decode($curl->response, true);
         $curl->close();

@@ -23,13 +23,13 @@ class App
 
     //截图最低热度
     static $hot_num_limit_arr = [
-        'HuYa' => 140000,
-        'DouYu' => 100000,
-        'CC' => 100000,
-        'YY' => 2000,
-        'Huajiao' => 5000,
-        'Egame' => 10000,
-        'Inke' => 50000
+        'HuYa' => 400000,
+        'DouYu' => 400000,
+        'CC' => 300000,
+        'YY' => 20000,
+        'Huajiao' => 50000,
+        'Egame' => 50000,
+        'Inke' => 100000
     ];
 
     public static function run($config, $record = false, $isGBK = false, $record_path = "./video")

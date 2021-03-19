@@ -27,7 +27,7 @@ class HuYaLive extends Live
     public function getDancingRoom()
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.huya.com/g/xingxiu');
+        $curl->setReferer('https://www.huya.com/g/xingxiu');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
         $curl->close();
@@ -58,7 +58,7 @@ class HuYaLive extends Live
     {
 
         $curl = new HttpCurl();
-        $curl->setReferrer('https://m.huya.com');
+        $curl->setReferer('https://m.huya.com');
         $roomUrl = sprintf(self::BASE_LIVE_URL, $roomId);
         $curl->get($roomUrl);
         $curl->close();
@@ -66,7 +66,7 @@ class HuYaLive extends Live
             throw new \ErrorException($curl->error_message);
         }
         $html = $curl->response;
-        preg_match("/hasvedio: \'(.*?)\'/", $html, $match);
+        preg_match("/hasvedio: '(.*?)'/", $html, $match);
         if (isset($match[1]) && $match[1]) {
             $url = 'https:' . str_replace('_1200', '', $match[1]);
 //            $url='https:'.$match[1];
@@ -85,7 +85,7 @@ class HuYaLive extends Live
     public function getLiveUrlArr($roomId)
     {
         $curl = new HttpCurl([], false);
-        $curl->setReferrer('https://www.huya.com');
+        $curl->setReferer('https://www.huya.com');
         $roomUrl = sprintf(self::BASE_ROOM_URL, $roomId);
         $curl->get($roomUrl);
         $curl->close();
@@ -124,13 +124,13 @@ class HuYaLive extends Live
     /**
      * @param array $arr
      * @param int $page
-     * @throws \ErrorException
      * @return array
+     * @throws \ErrorException
      */
     private function getTvRoomList($arr = [], $page = 1)
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://m.huya.com');
+        $curl->setReferer('https://m.huya.com');
         $roomUrl = sprintf(self::AV_ROOM_URL, $page);
         $curl->setOpt(CURLOPT_TIMEOUT, 10);
         $curl->get($roomUrl);
@@ -154,8 +154,8 @@ class HuYaLive extends Live
     }
 
     /**
-     * @throws \ErrorException
      * @return array
+     * @throws \ErrorException
      */
     public function getTvRoom()
     {
@@ -168,7 +168,7 @@ class HuYaLive extends Live
     public function getHotDanceRoom()
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://www.huya.com/g/xingxiu');
+        $curl->setReferer('https://www.huya.com/g/xingxiu');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
         $curl->close();

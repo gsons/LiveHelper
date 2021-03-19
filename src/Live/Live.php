@@ -59,6 +59,7 @@ abstract class Live
         $file = "{$path}/{$fileName}";
         $cmd = "ffmpeg -i \"{$liveUrl}\" -t {$time} -c:v copy -c:a copy {$file} -loglevel quiet";
         // $cmd='start "" cmd /k "chcp 65001 & ffmpeg -i "'.$liveUrl.'" -t '.$time.' -c:v copy -c:a copy  "'.$file.'" "';
+        Console::log('record cmd: ' . $cmd);
         $process = proc_open($cmd, [['pipe', 'r']], $pipes);
         return $process;
     }
@@ -82,12 +83,12 @@ abstract class Live
         }
         $file = "{$path}/{$fileName}";
         $cmd = "ffmpeg -i  \"{$liveUrl}\"  -f image2 {$file}  -loglevel quiet";
-//        Console::log('capture cmd: '.$cmd);
+        Console::log('capture cmd: ' . $cmd);
         $process = proc_open($cmd, [['pipe', 'r']], $pipes);
         return $process;
     }
 
-    private function exec($cmd)
+    public function exec($cmd)
     {
         if (substr(php_uname(), 0, 7) == "Windows") {
             $cmd = "start /B " . $cmd;

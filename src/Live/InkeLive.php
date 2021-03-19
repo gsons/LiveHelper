@@ -28,7 +28,7 @@ class InkeLive extends Live
     {
 
         $curl = new HttpCurl();
-        $curl->setReferrer('http://inke.cn');
+        $curl->setReferer('http://inke.cn');
         $roomUrl = sprintf(self::BASE_LIVE_URL, $roomId);
         $curl->get($roomUrl);
         $data = json_decode($curl->response, true);
@@ -52,7 +52,7 @@ class InkeLive extends Live
     public function getDancingRoom()
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('http://www.yy.com/');
+        $curl->setReferer('http://www.yy.com/');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
         $curl->close();
@@ -89,7 +89,7 @@ class InkeLive extends Live
     function getHotDanceRoom()
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('http://www.yy.com/');
+        $curl->setReferer('http://www.yy.com/');
         $curl->get(self::DANCE_ROOM_API_URL);
         $data = json_decode($curl->response, true);
         $curl->close();

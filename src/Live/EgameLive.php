@@ -10,10 +10,11 @@ namespace Gsons\Live;
 
 use Gsons\HttpCurl;
 
-class EGameLive extends Live
+class EgameLive extends Live
 {
     const BASE_ROOM_URL = "https://egame.qq.com/%s";
-    const SITE_NAME = "企鹅电竞";const SITE_CODE="Egame";
+    const SITE_NAME = "企鹅电竞";
+    const SITE_CODE = "Egame";
 
     const AV_ROOM_URL = "https://share.egame.qq.com/cgi-bin/pgg_async_fcgi";
 
@@ -22,13 +23,13 @@ class EGameLive extends Live
     /**
      * @param array $arr
      * @param int $page
-     * @throws \ErrorException
      * @return array
+     * @throws \ErrorException
      */
     private function getTvRoomList($arr = [], $page = 1)
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://egame.qq.com/livelist?layoutid=2000000110&tagId=0&tagIdStr=');
+        $curl->setReferer('https://egame.qq.com/livelist?layoutid=2000000110&tagId=0&tagIdStr=');
         $param = [
             'param' => '{"key":{"module":"pgg_live_read_ifc_mt_svr","method":"get_pc_live_list","param":{"appid":"2000000110","page_num":' . $page . ',"page_size":40,"tag_id":0,"tag_id_str":""}}}',
             'app_info' => '{"platform":4,"terminal_type":2,"egame_id":"egame_official","imei":"","version_code":"9.9.9.9","version_name":"9.9.9.9","ext_info":{"_qedj_t":"","ALG-flag_type":"30","ALG-flag_pos":"1"},"pvid":"914586521620071222"}',
@@ -64,14 +65,14 @@ class EGameLive extends Live
 
     /**
      * @param $roomId
-     * @throws \ErrorException
      * @return string
+     * @throws \ErrorException
      */
     public function getLiveUrl($roomId)
     {
 
         $curl = new HttpCurl([], false);
-        $curl->setReferrer('https://egame.qq.com');
+        $curl->setReferer('https://egame.qq.com');
         $roomUrl = sprintf(self::BASE_ROOM_URL, $roomId);
         $curl->get($roomUrl);
         $curl->close();
@@ -113,7 +114,7 @@ class EGameLive extends Live
     private function getDanceRoom()
     {
         $curl = new HttpCurl();
-        $curl->setReferrer('https://egame.qq.com/livelist?layoutid=2000000110&tagId=0&tagIdStr=');
+        $curl->setReferer('https://egame.qq.com/livelist?layoutid=2000000110&tagId=0&tagIdStr=');
         $param = [
             'param' => '{"key":{"module":"pgg_live_read_ifc_mt_svr","method":"get_pc_live_list","param":{"appid":"2000000157","page_num":1,"page_size":40,"tag_id":1735,"tag_id_str":""}}}',
             'app_info' => '{"platform":4,"terminal_type":2,"egame_id":"egame_official","imei":"","version_code":"9.9.9.9","version_name":"9.9.9.9","ext_info":{"_qedj_t":"","ALG-flag_type":"","ALG-flag_pos":""},"pvid":"654678323219092113"}',
