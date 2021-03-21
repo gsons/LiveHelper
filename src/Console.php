@@ -63,7 +63,7 @@ class Console
         self::init();
         if ($param instanceof \Exception) {
             $traceline = "#%s %s(%s): %s(%s)";
-            $msg = "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
+            $msg = "PHP  error: exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
 
             $trace = $param->getTrace();
             // print_r($trace);
