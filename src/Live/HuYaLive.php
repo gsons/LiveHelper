@@ -49,12 +49,45 @@ class HuYaLive extends Live
 
     }
 
+
+    /**
+     * @param $roomId
+     * @return mixed
+     * @throws \ErrorException
+     */
+    public function getLiveUrl($roomId){
+        $curl = new HttpCurl();
+        $curl->setReferer('https://m.huya.com');
+        $roomUrl = sprintf(self::BASE_LIVE_URL, $roomId);
+        $curl->get($roomUrl);
+        $curl->close();
+        if ($curl->error) {
+            throw new \ErrorException($curl->error_message);
+        }
+        $html = $curl->response;
+        preg_match("/<script> window.HNF_GLOBAL_INIT = (.*?)<\/script>/",$html,$match);
+//        file_put_contents('2.html',$match[1]);
+        if (isset($match[1]) && $match[1]) {
+            $arr=json_decode($match[1],true);
+            $streamInfo=$arr["roomInfo"]["tLiveInfo"]["tLiveStreamInfo"]["vStreamInfo"]["value"];
+            $real_url=[];
+            foreach ($streamInfo as $info){
+                $real_url[strtolower($info["sCdnType"]) . "_flv"] = $info["sFlvUrl"] . "/" . $info["sStreamName"] . "." . $info["sFlvUrlSuffix"] . "?" . $info["sFlvAntiCode"];
+                $real_url[strtolower($info["sCdnType"]) . "_hls"] = $info["sHlsUrl"] . "/" . $info["sStreamName"] . "." . $info["sHlsUrlSuffix"] . "?" . $info["sHlsAntiCode"];
+            }
+            $arr=array_values($real_url);
+            return $arr[rand(0,count($arr)-1)];
+        }else{
+            throw new \ErrorException("failed to get live url {$roomId}");
+        }
+    }
+
     /**
      * @param $roomId
      * @return string
      * @throws \ErrorException
      */
-    public function getLiveUrl($roomId)
+    public function fetchLiveUrl($roomId)
     {
 
         $curl = new HttpCurl();
