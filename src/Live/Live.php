@@ -79,6 +79,7 @@ abstract class Live
             $fileName = iconv('utf-8', 'gbk', $fileName);
         }
         if (!is_dir($path)) {
+            Console::log('!!!!!!!!!!  '.$path);
             mkdir($path, 0777, true);
         }
         $file = "{$path}/{$fileName}";

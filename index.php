@@ -18,7 +18,8 @@ $config = [
         612916=>'长腿兮兮',
         284053=>'雯雯',
         137045 => '音动-蓉儿',
-        596593=>'盛鸽-楚楚'
+        596593=>'盛鸽-楚楚',
+        17106609=>'小师妹'
     ],
     "Egame" => [
         619364874 => '菇七七',
@@ -69,4 +70,4 @@ $record_path = "./video";
 //初始化配置
 App::init();
 //开始监听录制
-App::run($config, true, true, $record_path);
+App::run($config, true, false, $record_path);

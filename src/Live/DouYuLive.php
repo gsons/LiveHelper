@@ -202,7 +202,7 @@ EOF;
                  * @var $v
                  * @var $sign
                  */
-                parse_str($arr[$key]);
+                @parse_str($arr[$key]);
                 $param = [
                     'v' => $v,
                     'did' => $did,

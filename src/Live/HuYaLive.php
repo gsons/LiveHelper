@@ -16,7 +16,7 @@ class HuYaLive extends Live
     const SITE_CODE = "HuYa";
     const BASE_ROOM_URL = "https://www.huya.com/%s";
     const BASE_LIVE_URL = "https://m.huya.com/%s";
-    const DANCE_ROOM_API_URL = "https://www.huya.com/cache.php?m=LiveList&do=getTmpLiveByPage&gameId=1663&tmpId=116&page=1";
+    const DANCE_ROOM_API_URL = "https://live.cdn.huya.com/livelist/game/tagLivelist?gameId=1663&tmpId=116&callback=getLiveListJsonpCallback&page=1";
     const AV_ROOM_URL = "https://www.huya.com/cache.php?m=LiveList&do=getLiveListByPage&gameId=2135&tagAll=0&page=%s";
 
     /**
@@ -29,7 +29,10 @@ class HuYaLive extends Live
         $curl = new HttpCurl();
         $curl->setReferer('https://www.huya.com/g/xingxiu');
         $curl->get(self::DANCE_ROOM_API_URL);
-        $data = json_decode($curl->response, true);
+        preg_match("/getLiveListJsonpCallback\((.*?)\)/",$curl->response,$match);
+        //echo $curl->response;
+        //var_dump($match);
+        $data = json_decode($match[1], true);
         $curl->close();
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
