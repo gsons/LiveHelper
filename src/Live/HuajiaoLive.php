@@ -14,7 +14,7 @@ use Gsons\HttpCurl;
 class HuajiaoLive extends Live
 {
     const SITE_NAME = "花椒直播";
-    const  SITE_CODE = "Huajiao";
+    const SITE_CODE = "Huajiao";
     const BASE_ROOM_URL = "https://www.huajiao.com/l/%s";
     const API_LIVE_URL = "https://h.huajiao.com/api/getFeedInfo?_rate=xd&stype=m3u8&sid=1596505786539.0925&liveid=%s&_=1596505786543&callback=Zepto1596505786534";
     const DANCE_ROOM_URL = "https://webh.huajiao.com/live/listcategory";

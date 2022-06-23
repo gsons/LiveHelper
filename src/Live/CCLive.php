@@ -18,7 +18,7 @@ class CCLive extends Live
     const  SITE_CODE = "CC";
     const BASE_ROOM_URL = "https://cc.163.com/%s";
     const BASE_LIVE_URL = "http://cgi.v.cc.163.com/video_play_url/%s";
-    const DANCE_ROOM_API_URL = "http://cc.163.com/wdf/game_lives/?gametype=65005&tag_id=79&format=json&start=0&size=100";
+    const DANCE_ROOM_API_URL = "https://api.cc.163.com/v1/entpage/custom_sub_tab_lives_pc?nav_name=65005&tab_name=wudao&start=0&size=100&request_from=index&sn=8a9d4432-156e-41a1-99cb-c7cffcf06948&uid=0&os=web";
     const TV_ROOM_API_URL = "https://cc.163.com/wdf/game_lives/?gametype=65004&tag_id=0&format=json&start=%s&size=%s&uid=0&sn=3a0ccca0-127b-4ca8-89fe-76c4d5382496&os=web";
 
     /**
@@ -62,7 +62,7 @@ class CCLive extends Live
         if (isset($data['lives']) && !empty($data['lives'])) {
             $list = $data['lives'];
             foreach ($list as $vo) {
-                if (isset($vo['left_subscript']['name']) && $vo['left_subscript']['name'] == 'dancing') {
+                if (isset($vo['left_subscript']['name']) && $vo['left_subscript']['name'] == '正在跳舞') {
                     $arr[] = ['roomId' => $vo['ccid'], 'nickName' => $vo['nickname']];
                 }
             }

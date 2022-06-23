@@ -14,8 +14,8 @@ use think\Cache;
 use Gsons\lib\TvRoom;
 
 
-$hu=new \Gsons\Live\HuYaLive();
-file_put_contents('1.html',$hu->getDancingRoom('4024557'));
+$hu=new \Gsons\Live\CCLive();
+file_put_contents('1.html',$hu->getLiveUrl('416399818'));
 exit;
 $config = ['CC' => 'CC直播', 'YY' => 'YY直播', 'HuYa' => '虎牙直播', 'DouYu' => '斗鱼直播', 'Egame' => '企鹅电竞'];
 $temp = Cache::get('TV_LIVE_URL');

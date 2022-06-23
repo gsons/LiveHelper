@@ -14,11 +14,15 @@ class HttpCurl extends Curl
 {
     //默认的useragent
     private $userAgentArr = [
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36'
     ];
     //默认的IP
     private $ipArr = [
-        '192.168.64.1'
+        '112.168.64.1',
+        '112.168.64.11',
+        '112.168.64.21',
+        '112.168.64.31',
+        '112.168.64.51',
     ];
 
     const TIME_OUT=15;

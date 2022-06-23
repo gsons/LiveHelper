@@ -28,12 +28,14 @@ class HuYaLive extends Live
     {
         $curl = new HttpCurl();
         $curl->setReferer('https://www.huya.com/g/xingxiu');
-        $curl->get(self::DANCE_ROOM_API_URL);
+        $curl->setHeader('X-Requested-With','XMLHttpRequest');
+        $curl->get(self::DANCE_ROOM_API_URL.'&_='.uniqid());
         preg_match("/getLiveListJsonpCallback\((.*?)\)/",$curl->response,$match);
-        //echo $curl->response;
-        //var_dump($match);
-        $data = json_decode($match[1], true);
         $curl->close();
+        if(!isset($match[1])){
+            return [];
+        }
+        $data = json_decode($match[1], true);
         if ($curl->error) {
             throw new \ErrorException($curl->error_message);
         }
