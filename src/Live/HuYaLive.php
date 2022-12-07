@@ -81,7 +81,8 @@ class HuYaLive extends Live
                 $real_url[strtolower($info["sCdnType"]) . "_hls"] = $info["sHlsUrl"] . "/" . $info["sStreamName"] . "." . $info["sHlsUrlSuffix"] . "?" . $info["sHlsAntiCode"];
             }
             $arr=array_values($real_url);
-            return $arr[rand(0,count($arr)-1)];
+            $str=$arr[rand(0,count($arr)-1)];
+            return str_replace('&ctype=tars_mobile','',$str);
         }else{
             throw new \ErrorException("failed to get live url {$roomId}");
         }

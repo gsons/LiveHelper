@@ -24,7 +24,7 @@ class App
     //截图最低热度
     static $hot_num_limit_arr = [
         'HuYa' => 400000,
-        'DouYu' => 400000,
+        'DouYu' => 600000,
         'CC' => 300000,
         'YY' => 50000,
         'Huajiao' => 50000,
